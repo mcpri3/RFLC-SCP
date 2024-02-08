@@ -1,9 +1,14 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # RFLC-SCP <img src="man/figures/compendium-sticker.png" align="right" style="float:right; height:120px;"/>
 
 <!-- badges: start -->
+
+[![License: GPL (\>=
+2)](https://img.shields.io/badge/License-GPL%20%28%3E%3D%202%29-blue.svg)](https://choosealicense.com/licenses/gpl-2.0/)
 <!-- badges: end -->
+
 <p align="left">
 • <a href="#overview">Overview</a><br> •
 <a href="#features">Features</a><br> •
@@ -17,39 +22,78 @@
 
 ## Overview
 
-This research compendium… **{{ DESCRIBE YOUR PROJECT }}**
+RFLC-SCP: A Robust Framework to assess Landscape Connectivity for
+Systematic Conservation Planning application
+
+This project provides all the data and code used to produce the
+methodological framework and results presented in:
+
+Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P.,
+Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L.,
+Moreira, F., Dertien, J., & Thuiller, W. (in prep.). A robust framework
+to assess landscape connectivity for systematic conservation planning
+application.
 
 ## Features
 
-The main purpose of this compendium is to… **{{ DESCRIBE THE MAIN
-FEATURES }}**
+The workflow is as follow,
+
+- Step 1. Clustering species in functional groups having similar traits
+  and environmental niches (analyses/Rcode01_GetFunctionalGroups.R).
+- Step 2. Generating resistance and habitat suitability maps for each
+  group based on an ensemble of species distribution models
+  (analyses/Rcode2_GetResisSuitMaps.R).
+- Step 3. Generating ecological continuities per group
+  (analyses/Rcode3_GetEcologicalContinuities.R).
+- Step 4. Calculating multi-scale network metrics
+  (analyses/Rcode4_GetConnectivityMetrics.R).
 
 ## Content
 
 This repository is structured as follow:
 
--   [`DESCRIPTION`](https://github.com/mcpri3/RFLC-SCP/tree/master/DESCRIPTION):
-    contains project metadata (authors, date, dependencies, etc.)
+- [`DESCRIPTION`](https://github.com/mcpri3/RFLC-SCP/tree/master/DESCRIPTION):
+  contains project metadata (authors, date, dependencies, etc.)
 
--   [`make.R`](https://github.com/mcpri3/RFLC-SCP/tree/master/make.R):
-    main R script to run the entire project
+- [`make.R`](https://github.com/mcpri3/RFLC-SCP/tree/master/make.R):
+  main R script to run the entire project
 
--   [`R/`](https://github.com/mcpri3/RFLC-SCP/tree/master/R): contains R
-    functions developed especially for this project
+- [`R/`](https://github.com/mcpri3/RFLC-SCP/tree/master/R): contains R
+  functions developed especially for this project
 
--   **{{ LIST ADDITIONAL FILES/FOLDER }}**
+- [`man/`](https://github.com/mcpri3/RFLC-SCP/tree/master/man): contains
+  help files of R functions
+
+- [`analyses/`](https://github.com/mcpri3/RFLC-SCP/tree/master/analyses):
+  contains R scripts to run each step of the workflow
+
+- [`data/raw-data/`](): contains all raw data required to perform
+  analyses. Due to its size, \[`data/raw-data/`\] folder was stored on
+  another platform, accessible here: These data needs to be downloaded
+  from and stored in the project folder before running the workflow
+
+- [`data/derived-data/`](): contains all intermediate data created
+  during the workflow. Due to its size, \[`data/derived-data/`\] folder
+  was stored on another platform, accessible here:
+
+- [`outputs/`](): contains final data created during the workflow. Due
+  to its size, \[`outputs/`\] folder was stored on another platform,
+  accessible here:
+
+- [`figures/`](https://github.com/mcpri3/RFLC-SCP/tree/master/figures):
+  contains all the figures created during the workflow
 
 ## Installation
 
 To install this compendium:
 
--   [Fork](https://docs.github.com/en/get-started/quickstart/contributing-to-projects)
-    this repository using the GitHub interface.
--   [Clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-    your fork using `git clone fork-url` (replace `fork-url` by the URL
-    of your fork). Alternatively, open [RStudio
-    IDE](https://posit.co/products/open-source/rstudio/) and create a
-    New Project from Version Control.
+- [Fork](https://docs.github.com/en/get-started/quickstart/contributing-to-projects)
+  this repository using the GitHub interface.
+- [Clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
+  your fork using `git clone fork-url` (replace `fork-url` by the URL of
+  your fork). Alternatively, open [RStudio
+  IDE](https://posit.co/products/open-source/rstudio/) and create a New
+  Project from Version Control.
 
 ## Usage
 
@@ -57,20 +101,30 @@ Launch the
 [`make.R`](https://github.com/mcpri3/RFLC-SCP/tree/master/make.R) file
 with:
 
-    source("make.R")
+``` r
+source("make.R")
+```
+
+Then go to the \[`analyses/`\] folder and run successively the different
+scripts.
 
 **Notes**
 
--   All required packages listed in the `DESCRIPTION` file will be
-    installed (if necessary)
--   All required packages and R functions will be loaded
--   Some analyses listed in the `make.R` might take time
+- All required packages listed in the `DESCRIPTION` file will be
+  installed (if necessary)
+- All required packages and R functions will be loaded
+- Some analyses listed in the script of the \[`analyses/`\] folder might
+  take time
 
 ## Citation
 
 Please use the following citation:
 
-> **{{ ADD A CITATION }}**
+> Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P.,
+> Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L.,
+> Moreira, F., Dertien, J., & Thuiller, W. (in prep.). A robust
+> framework to assess landscape connectivity for systematic conservation
+> planning application.
 
 ## Contributing
 
@@ -81,11 +135,3 @@ Guidelines](https://github.com/mcpri3/RFLC-SCP/blob/main/CONTRIBUTING.md).
 Please note that this project is released with a [Contributor Code of
 Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.
-
-## Acknowledgments
-
-**{{ OPTIONAL SECTION }}**
-
-## References
-
-**{{ OPTIONAL SECTION }}**

@@ -18,6 +18,7 @@ RFLC-SCP <img src="man/figures/compendium-sticker.png" align="right" style="floa
 =========================================================
 
 <!-- badges: start -->
+[![License: GPL (>= 2)](https://img.shields.io/badge/License-GPL%20%28%3E%3D%202%29-blue.svg)](https://choosealicense.com/licenses/gpl-2.0/)
 <!-- badges: end -->
 
 
@@ -38,15 +39,20 @@ RFLC-SCP <img src="man/figures/compendium-sticker.png" align="right" style="floa
 
 ## Overview
 
-This research compendium... **{{ DESCRIBE YOUR PROJECT }}**
+RFLC-SCP: A Robust Framework to assess Landscape Connectivity for Systematic Conservation Planning application
 
+This project provides all the data and code used to produce the methodological framework and results presented in:
 
+Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P., Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L., Moreira, F., Dertien, J., & Thuiller, W. (in prep.). A robust framework to assess landscape connectivity for systematic conservation planning application. 
 
 ## Features
 
-The main purpose of this compendium is to... **{{ DESCRIBE THE MAIN FEATURES }}**
-
-
+The workflow is as follow, 
+ 
+- Step 1. Clustering species in functional groups having similar traits and environmental niches (analyses/Rcode01_GetFunctionalGroups.R).
+- Step 2. Generating resistance and habitat suitability maps for each group based on an ensemble of species distribution models  (analyses/Rcode2_GetResisSuitMaps.R).
+- Step 3. Generating ecological continuities per group (analyses/Rcode3_GetEcologicalContinuities.R).
+- Step 4. Calculating multi-scale network metrics (analyses/Rcode4_GetConnectivityMetrics.R).
 
 ## Content
 
@@ -61,9 +67,24 @@ main R script to run the entire project
 - [`R/`](https://github.com/mcpri3/RFLC-SCP/tree/master/R):
 contains R functions developed especially for this project
 
-- **{{ LIST ADDITIONAL FILES/FOLDER }}**
+- [`man/`](https://github.com/mcpri3/RFLC-SCP/tree/master/man):
+contains help files of R functions
 
+- [`analyses/`](https://github.com/mcpri3/RFLC-SCP/tree/master/analyses):
+contains R scripts to run each step of the workflow
 
+- [`data/raw-data/`]():
+contains all raw data required to perform analyses. Due to its size, [`data/raw-data/`] folder was stored on another platform, accessible here: 
+These data needs to be downloaded from and stored in the project folder before running the workflow  
+
+- [`data/derived-data/`]():
+contains all intermediate data created during the workflow. Due to its size, [`data/derived-data/`] folder was stored on another platform, accessible here: 
+
+- [`outputs/`]():
+contains final data created during the workflow. Due to its size, [`outputs/`] folder was stored on another platform, accessible here:  
+
+- [`figures/`](https://github.com/mcpri3/RFLC-SCP/tree/master/figures):
+contains all the figures created during the workflow
 
 ## Installation
 
@@ -76,8 +97,6 @@ your fork using `git clone fork-url` (replace `fork-url` by the URL of your fork
 Alternatively, open [RStudio IDE](https://posit.co/products/open-source/rstudio/) 
 and create a New Project from Version Control.
 
-
-
 ## Usage
 
 Launch the [`make.R`](https://github.com/mcpri3/RFLC-SCP/tree/master/make.R)
@@ -87,21 +106,19 @@ file with:
 source("make.R")
 ```
 
+Then go to the [`analyses/`] folder and run successively the different scripts. 
+
 **Notes**
 
 - All required packages listed in the `DESCRIPTION` file will be installed (if necessary)
 - All required packages and R functions will be loaded
-- Some analyses listed in the `make.R` might take time
-
-
+- Some analyses listed in the script of the [`analyses/`] folder might take time
 
 ## Citation
 
 Please use the following citation: 
 
-> **{{ ADD A CITATION }}**
-
-
+> Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P., Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L., Moreira, F., Dertien, J., & Thuiller, W. (in prep.). A robust framework to assess landscape connectivity for systematic conservation planning application. 
 
 ## Contributing
 
@@ -111,15 +128,3 @@ check out our [Contributor Guidelines](https://github.com/mcpri3/RFLC-SCP/blob/m
 Please note that this project is released with a 
 [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). 
 By contributing to this project, you agree to abide by its terms.
-
-
-
-## Acknowledgments
-
-**{{ OPTIONAL SECTION }}**
-
-
-
-## References
-
-**{{ OPTIONAL SECTION }}**

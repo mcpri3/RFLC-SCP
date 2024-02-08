@@ -18,6 +18,10 @@
 
 # User-specific files ----
 README.html
-inst/doc
-man/
 NAMESPACE
+
+# data
+data/*
+
+#outputs 
+outputs/*

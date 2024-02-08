@@ -1,18 +1,50 @@
 Package: RFLC-SCP
-Type: Package
-Title: The Title of the Project
+Type: Research project data and code distribution
+Title: A Robust Framework to assess Landscape Connectivity for Systematic Conservation Planning application
 Version: 0.0.0.9000
 Authors@R: c(
     person(given   = "Marie-Caroline",
            family  = "Prima",
            role    = c("aut", "cre", "cph"),
            email   = "marie-caroline.prima@univ-grenoble-alpes.fr",
-           comment = c(ORCID = "{{orcid}}")))
-Description: A paragraph providing a full description of the project (on 
-    several lines...)
+           comment = c(ORCID = "{{0000-0001-9392-0022}}")))
+Description: This project provides all the data and code used to produce the methodological framework and results presented in:
+  Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P., Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L., Moreira, F., Dertien, J., & 
+  Thuiller, W. (in prep.). A robust framework to assess landscape connectivity for systematic conservation planning application. 
+  The workflow is as follow, 
+  Step 1. Clustering species in functional groups having similar traits and environmental niches (analyses/Rcode01_GetFunctionalGroups.R).
+  Step 2. Generating resistance and habitat suitability maps for each group based on an ensemble of species distribution models  (analyses/Rcode2_GetResisSuitMaps.R).
+  Step 3. Generating ecological continuities per group (analyses/Rcode3_).
+  Step 4. Calculating multi-scale network metrics (analyses/Rcode4_).
+  First run the make.R file before any run of R scripts.
+  R functions are located in the R/ folder and are automatically loaded when the make.R file is run.
+  Function help can be found by running the classic linecode help('function_name'). 
+  Initial and intermediate datasets are located is the data/ folder. 
+  Generated outputs are located in the outputs/ folder. 
 URL: https://github.com/mcpri3/RFLC-SCP
 BugReports: https://github.com/mcpri3/RFLC-SCP/issues
 License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Imports: 
+    ade4,
+    ape,
+    biomod2,
+    clValid,
+    corrplot,
+    devtools,
+    dplyr,
+    ecospat,
+    FD,
+    foreach,
+    fpc,
+    ggplot2,
+    ggthemes,
+    grDevices,
+    here,
+    huge,
+    openxlsx,
+    reshape2,
+    sf,
+    terra
