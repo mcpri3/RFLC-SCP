@@ -13,6 +13,7 @@
 #' Step 2. Generating resistance and habitat suitability maps for each group based on an ensemble of species distribution models  (analyses/Rcode2_GetResisSuitMaps.R).
 #' Step 3. Generating ecological continuities per group (analyses/Rcode3_GetEcologicalContinuities.R).
 #' Step 4. Calculating multi-scale network metrics (analyses/Rcode4_GetConnectivityMetrics.R).
+#' Step 5. (optional) Plot figures (analyses/Rcode5_GetFigures.R).
 #' 
 #' First run this make.R file before any run of R scripts.
 #' R functions are located in the R/ folder and are automatically loaded when the make.R file is run.
@@ -40,5 +41,6 @@ devtools::load_all(here::here())
 library(dplyr)
 library(foreach)
 library(igraph)
+library(ggplot2)
 
 

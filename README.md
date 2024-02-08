@@ -25,7 +25,7 @@
 RFLC-SCP: A Robust Framework to assess Landscape Connectivity for
 Systematic Conservation Planning application
 
-This project provides all the data and code used to produce the
+This project provides all the data and codes used to produce the
 methodological framework and results presented in:
 
 Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P.,
@@ -47,6 +47,7 @@ The workflow is as follow,
   (analyses/Rcode3_GetEcologicalContinuities.R).
 - Step 4. Calculating multi-scale network metrics
   (analyses/Rcode4_GetConnectivityMetrics.R).
+- Step 5. (optional) Plot figures (analyses/Rcode5_GetFigures.R).
 
 ## Content
 
