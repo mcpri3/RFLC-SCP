@@ -1,7 +1,7 @@
 #' RFLC-SCP: A Robust Framework to assess Landscape Connectivity for Systematic Conservation Planning application
 #' 
 #' @description 
-#' This project provides all the data and code used to produce the methodological framework and results presented in:
+#' This project provides all the data and codes used to produce the methodological framework and results presented in:
 #' 
 #' Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P., Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L., Moreira, F., Dertien, J.,
 #' & Thuiller, W. (in prep.). A robust framework to assess landscape connectivity for systematic conservation planning application. 
@@ -18,8 +18,8 @@
 #' R functions are located in the R/ folder and are automatically loaded when the make.R file is run.
 #' Function help can be found by running the classic linecode help('function_name'). 
 #' 
-#' Initial and intermediate datasets are located is the data/ folder. 
-#' Generated outputs are located in the outputs/ folder. 
+#' Initial and intermediate datasets are located is the data/ folder (to be downloaded and added to the project from https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder?rvi=1). 
+#' Generated outputs are located in the outputs/ folder (to be downloaded and added to the project from https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-outputs-folder/settings). 
 #'  
 #'  
 #' @author Marie-Caroline Prima \email{marie-caroline.prima@univ-grenoble-alpes.fr}
@@ -32,7 +32,6 @@
 
 devtools::install_deps(upgrade = "never")
 
-
 ## Load Project Addins (R Functions and Packages) ----
 
 devtools::load_all(here::here())
@@ -42,8 +41,4 @@ library(dplyr)
 library(foreach)
 library(igraph)
 
-## Run Project ----
-
-# List all R scripts in a sequential order and using the following form:
-# source(here::here("analyses", "script_X.R"))
 

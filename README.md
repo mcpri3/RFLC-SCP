@@ -56,7 +56,7 @@ This repository is structured as follow:
   contains project metadata (authors, date, dependencies, etc.)
 
 - [`make.R`](https://github.com/mcpri3/RFLC-SCP/tree/master/make.R):
-  main R script to run the entire project
+  main R script to load project dependencies
 
 - [`R/`](https://github.com/mcpri3/RFLC-SCP/tree/master/R): contains R
   functions developed especially for this project
@@ -67,18 +67,24 @@ This repository is structured as follow:
 - [`analyses/`](https://github.com/mcpri3/RFLC-SCP/tree/master/analyses):
   contains R scripts to run each step of the workflow
 
-- [`data/raw-data/`](): contains all raw data required to perform
-  analyses. Due to its size, \[`data/raw-data/`\] folder was stored on
-  another platform, accessible here: These data needs to be downloaded
-  from and stored in the project folder before running the workflow
+- [`data/raw-data/`](https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder):
+  contains all raw data required to perform analyses. Due to its size,
+  \[`data/raw-data/`\] folder was stored on another platform, accessible
+  here:
+  <https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder>
+  These data need to be downloaded and stored in the project folder
+  before running the workflow
 
-- [`data/derived-data/`](): contains all intermediate data created
-  during the workflow. Due to its size, \[`data/derived-data/`\] folder
-  was stored on another platform, accessible here:
-
-- [`outputs/`](): contains final data created during the workflow. Due
-  to its size, \[`outputs/`\] folder was stored on another platform,
+- [`data/derived-data/`](https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder):
+  contains all intermediate data created during the workflow. Due to its
+  size, \[`data/derived-data/`\] folder was stored on another platform,
   accessible here:
+  <https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder>
+
+- [`outputs/`](https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-outputs-folder):
+  contains final data created during the workflow. Due to its size,
+  \[`outputs/`\] folder was stored on another platform, accessible here:
+  <https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-outputs-folder>
 
 - [`figures/`](https://github.com/mcpri3/RFLC-SCP/tree/master/figures):
   contains all the figures created during the workflow

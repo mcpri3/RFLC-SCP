@@ -8,7 +8,7 @@ Authors@R: c(
            role    = c("aut", "cre", "cph"),
            email   = "marie-caroline.prima@univ-grenoble-alpes.fr",
            comment = c(ORCID = "{{0000-0001-9392-0022}}")))
-Description: This project provides all the data and code used to produce the methodological framework and results presented in:
+Description: This project provides all the data and codes used to produce the methodological framework and results presented in:
   Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P., Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L., Moreira, F., Dertien, J., & 
   Thuiller, W. (in prep.). A robust framework to assess landscape connectivity for systematic conservation planning application. 
   The workflow is as follow, 
@@ -19,8 +19,8 @@ Description: This project provides all the data and code used to produce the met
   First run the make.R file before any run of R scripts.
   R functions are located in the R/ folder and are automatically loaded when the make.R file is run.
   Function help can be found by running the classic linecode help('function_name'). 
-  Initial and intermediate datasets are located is the data/ folder. 
-  Generated outputs are located in the outputs/ folder. 
+  Initial and intermediate datasets are located is the data/ folder (to be downloaded and added to the project, see the Readme file)
+  Generated outputs are located in the outputs/ folder (to be downloaded and added to the project, see the Readme file). 
 URL: https://github.com/mcpri3/RFLC-SCP
 BugReports: https://github.com/mcpri3/RFLC-SCP/issues
 License: GPL (>= 2)
