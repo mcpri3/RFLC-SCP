@@ -36,7 +36,7 @@ devtools::install_deps(upgrade = "never")
 
 devtools::load_all(here::here())
 
-# Required packages 
+# Required loaded packages 
 library(dplyr)
 library(foreach)
 library(igraph)

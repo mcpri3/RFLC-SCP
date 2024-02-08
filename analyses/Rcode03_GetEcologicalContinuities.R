@@ -5,7 +5,7 @@
 
 
 #####################################################################################################################
-###################################### 1. Generation of Omniscape parameter files ###################################
+###################################### 1. Generate Omniscape parameter files ########################################
 #####################################################################################################################
 # The parameter files are located in the /data/derived-data/OmniscapeParamFiles folder
 
@@ -92,21 +92,22 @@ write.table(full.param, here::here('data/derived-data/BatchRun/list-of-params-fo
 #####################################################################################################################
 # The Omniscape outputs are located in the /data/derived-data/OmniscapeOutput folder
 
+#####################################################################################################################
+################### THIS IS THE BEGINNING OF JULIA CODE THAT CAN ONLY BE RUN IN JULIA SOFTWARE ######################
+
 import Pkg; Pkg.add("Omniscape")
 
-
 filepath = string("/path/to/my/project/RFLC-SCP/data/derived-data/OmniscapeParamFiles/IniFile_", ARGS[1], "_GroupID_", ARGS[2], "_TransfoCoef_", ARGS[3], "_SuitThreshold_", ARGS[4], "_DispDist_", ARGS[5], "km.ini")
-
+# ARG is a vector of 5 parameters in that order : 1: group class, 2: group number, 3: c coefficient used to transform suitability into resistance, 4: threshold probability to select source pixels, 5: dispersal distance 
 
 using Omniscape
 run_omniscape(filepath)
 
-
-# ARG is a vector of 5 parameters in that order : 1: group class, 2: group number, 3: c coefficient used to transform suitability into resistance, 4: threshold probability to select source pixels, 5: dispersal distance 
-
+################## THIS IS THE END OF JULIA CODE THAT CAN ONLY BE RUN IN JULIA SOFTWARE #############################
+#####################################################################################################################
 
 #####################################################################################################################
-##################### 3. Identification of ecological continuities from Omniscape outputs ###########################
+######################## 3. Delineate ecological continuities from Omniscape outputs ################################
 #####################################################################################################################
 # The delineation of ecological continuities are located in the /outputs/EcologicalContinuities/ folder
 
@@ -141,7 +142,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
 }
 
 #####################################################################################################################
-########################### 4. Calculates ecological continuities' probability  #####################################
+########################### 4. Calculate ecological continuities' probability  ######################################
 #####################################################################################################################
 # The probability rasters of ecological continuities are located in the /outputs/EcologicalContinuities/Raster/Probs/ folder
 

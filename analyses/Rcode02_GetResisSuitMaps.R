@@ -15,7 +15,7 @@ occur <- readRDS(here::here('data/raw-data/Vertebrate-Species-GBIF-INPN-IUCNOccu
 env <- terra::rast(here::here('data/raw-data/EnvironmentalVariables_France_Res1000m.tif'))
 
 ################################################################
-# Generates presences/pseudo-absences spatial layer per group 
+# Generate presences/pseudo-absences spatial layer per group 
 ################################################################
 # The spatial layers of presences/pseudo-absences are located in /data/derived-data/inputSDM/ folder 
 
@@ -70,19 +70,19 @@ for (i in 1:nrow(combi.doable)) { #loop on each group, preferably run on a dista
   
   for (c in c(1:k)) {
     
-    # Loads presences/pseudo-absences 
+    # Load presences/pseudo-absences 
     occur.full <- terra::vect(here::here(paste0('data/derived-data/inputSDM/OccurrenceData_France_', g, '_GroupID_K=', c, '_Res1000_2010-2020.gpkg')))
-    # Loads sampling effort and add +1 for probability not to be 0 
+    # Load sampling effort and add +1 for probability not to be 0 
     sampE <- terra::rast(here::here(paste0('data/raw-data/SamplingEffort_France_', g, '_Res1000_2010-2020.tif')))
     sampE <- sampE + 1 #+1 for 0 to be selected
-    # Extracts sampling effort and transform it into a probability 
+    # Extract sampling effort and transform it into a probability 
     occur.full$sampE <- terra::extract(sampE, occur.full)$sum
     occur.full$sampE <- occur.full$sampE/max(occur.full$sampE)
-    # Splits presences and pseudo-absences 
+    # Split presences and pseudo-absences 
     abs <- occur.full[occur.full$Nocc == 0,]
     occur <- occur.full[occur.full$Nocc == 1,]
     
-    # Checks if subsampling presences is needed 
+    # Check if subsampling presences is needed 
     sample.presence = F
     if (nrow(occur) > max.occ) { # if too many occurrences (i.e., > max.occ ), we subsample to gain speed 
       sample.presence = T
@@ -95,7 +95,7 @@ for (i in 1:nrow(combi.doable)) { #loop on each group, preferably run on a dista
       
     }
     
-    # Generates the TRUE/FALSE matrix required for biomod2 to work with user defined PAs 
+    # Generate the TRUE/FALSE matrix required for biomod2 to work with user defined PAs 
     my.user.table = matrix(data = FALSE , ncol = nrep.PA, nrow = length(occur.full))
     for (eta in 1:nrep.PA) {
       if (sample.presence) { #if subsampling presences is needed 
@@ -107,15 +107,15 @@ for (i in 1:nrow(combi.doable)) { #loop on each group, preferably run on a dista
       idx.p <- sample(1:length(abs), n.abs, prob = abs$sampE, replace = F) #sample pseudo-absences 
       my.user.table[(idx.p+length(occur)), eta] <- TRUE
     }
-    # Puts back together presences and pseudo-absences 
+    # Put back together presences and pseudo-absences 
     occur <- rbind(occur, abs)
     occur <- occur[1:length(occur), "Nocc"]
-    # Removes unused rows
+    # Remove unused rows
     kept <- apply(my.user.table, 1, sum)
     occur <- occur[kept > 0, ]
     my.user.table <- my.user.table[kept > 0, ]
     
-    # Formats Data with pseudo-absences 
+    # Format Data with pseudo-absences 
     myBiomodData <- biomod2::BIOMOD_FormatingData(resp.name = paste0(g, '_GroupID_', c),
                                                   resp.var = occur,
                                                   expl.var = env,

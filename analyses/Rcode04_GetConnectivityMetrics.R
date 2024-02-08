@@ -4,7 +4,7 @@
 ############################################################################################################################################################
 
 #####################################################################################################################
-############### 1. Calculation of the % of overlap between ecological continuities and protected areas ##############
+############### 1. Calculate the % of overlap between ecological continuities and protected areas ###################
 #####################################################################################################################
 # The output files are located in /outputs/Indicators folder 
 
@@ -15,7 +15,7 @@ all.ep.merge <- sf::st_union(all.ep) #merge all polygons
 
 for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably run on a distant cluster each combination in parallel
 
-  # read EC delineation
+  # Read EC delineation
   corrid <- try(sf::st_read(here::here(paste0('outputs/EcologicalContinuities/Vector/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
                                               '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km.shp'))))
   corrid$corrid.area.km2 <- sf::st_area(corrid)/1000000
@@ -43,8 +43,8 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
 }
 
 #####################################################################################################################
-############### 2. Generation of spatial network of connections among protected areas  ##############################
-###### 3. Calculation of multi-scale network metrics based on the probability of connectivity (PC) metric   #########
+################ 2. Generate spatial network of connections among protected areas  ##################################
+####### 3. Calculate multi-scale network metrics based on the probability of connectivity (PC) metric   #############
 #####################################################################################################################
 # The output files are located in /outputs/Indicators, /outputs/EdgeLists and /outputs/Networks folder 
 
@@ -57,14 +57,14 @@ connector = T #whether PC_connector (TRUE) is calculated (can take a while)
 
 for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably run on a distant cluster each combination in parallel
 
-  # read EC delineation
+  # Read EC delineation
   corrid <- try(sf::st_read(here::here(paste0('outputs/EcologicalContinuities/Vector/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
                                               '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km.shp'))))
   
   if (sum(class(corrid) == 'try-error') == 0) {
     
     #####################################################################################################################
-    ############### 2. Generation of spatial network of connections among protected areas  ##############################
+    ############### 2. Generate spatial network of connections among protected areas  ###################################
     #####################################################################################################################
     
     corrid$corrid.area.km2 <- as.numeric(sf::st_area(corrid))/1000000 # get EC area
@@ -120,7 +120,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
   
   
     #####################################################################################################################
-    ###### 3. Calculation of multi-scale network metrics based on the probability of connectivity (PC) metric   #########
+    ###### 3. Calculate multi-scale network metrics based on the probability of connectivity (PC) metric   ##############
     #####################################################################################################################
     # Read suitable habitat for the group 
     suit.hab <- terra::rast(here::here(paste0('data/derived-data/SourceLayers/SourceLayer_', lst.param[i, 2],'_GroupID_', lst.param[i, 3], 

@@ -247,6 +247,7 @@ PRE_FATE.speciesDistanceCombine = function(list.mat.dist
   if (opt.normal)
   {
     mat.dist = lapply(mat.dist, function(x) {
+      # diag(x) = NA ## to counteract if some 0 values other than on the diag
       ## Non-paranormal transformation
       y = huge::huge.npn(x)
       ## Normalization by maximum

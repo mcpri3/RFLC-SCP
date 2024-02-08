@@ -3,7 +3,6 @@
 # Dissimilarity matrices are located in the data/derived-data/DissimilarityMatrices/ folder
 ################################################################################################################################
 
-library(dplyr) 
 #################################################################################################
 # Import required datasets; see data/raw-data/README.html for detailed description of datasets 
 #################################################################################################
@@ -13,7 +12,7 @@ env <- readRDS(here::here('data/raw-data/EnvironmentalVariables_France_Res1000m'
 
 # Species list with their traits 
 sp.lst.traits <- openxlsx::read.xlsx(here::here('data/raw-data/VertebrateSpecies-list_FoS_AcT_Morph_MovM_Aq_DD_LifeH_Diet_HabP_NHabP_Press.xlsx'))
-sp.lst.traits <- sp.lst.traits[sp.lst.traits$SPECIES_NAME != "Muscicapa tyrrhenica", ]
+sp.lst.traits <- sp.lst.traits[sp.lst.traits$SPECIES_NAME != "Muscicapa tyrrhenica", ] #treated as Muscicapa striata 
 # Species presences/pseudo-absences 
 occur <- readRDS(here::here('data/raw-data/Vertebrate-Species-GBIF-INPN-IUCNOccurrenceData_France_Res1000m_2010-2020'))
 
