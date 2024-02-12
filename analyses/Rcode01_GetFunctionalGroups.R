@@ -24,6 +24,10 @@ occur <- readRDS(here::here('data/raw-data/Vertebrate-Species-GBIF-INPN-IUCNOccu
 if (!dir.exists(here::here('data/derived-data/DissimilarityMatrices'))) {
   dir.create(here::here('data/derived-data/DissimilarityMatrices'))
 }
+# Create the folder of functional groups if does not exist 
+if (!dir.exists(here::here('data/derived-data/FunctionalGroups'))) {
+  dir.create(here::here('data/derived-data/FunctionalGroups'))
+}
 
 # PCA-env number 1 including abiotic conditions (i.e., topography and climatic conditions)
 for (g in unique(sp.lst.traits$CLASS)) {
