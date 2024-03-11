@@ -9,7 +9,7 @@ Authors@R: c(
            email   = "marie-caroline.prima@univ-grenoble-alpes.fr",
            comment = c(ORCID = "{{0000-0001-9392-0022}}")))
 Description: This project provides all the data and codes used to produce the methodological framework and results presented in:
-  Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P., Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L., Moreira, F., Dertien, J., & 
+  Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P., Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L., Moreira, F., Dertien, J., Fernandez, N., & 
   Thuiller, W. (in prep.). A robust framework to assess landscape connectivity for systematic conservation planning application. 
   The workflow is as follow, 
   Step 1. Clustering species in functional groups having similar traits and environmental niches (analyses/Rcode01_GetFunctionalGroups.R).
@@ -30,22 +30,16 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports: 
     ade4,
-    ape,
-    biomod2,
     clValid,
-    corrplot,
-    devtools,
-    dplyr,
+    combinat,
+    data.table,
     ecospat,
-    FD,
     foreach,
     fpc,
     ggplot2,
     ggthemes,
-    grDevices,
-    here,
     huge,
-    openxlsx,
+    igraph,
+    raster,
     reshape2,
-    sf,
-    terra
+    sf

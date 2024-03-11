@@ -4,7 +4,7 @@
 # Figures are located in the figures/ folder
 
 # Read required general dataset 
-lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun.txt')) #table of all parameter combinations 
+lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun-step2.txt')) #table of all parameter combinations 
 lst.param$groupID <- ifelse(lst.param$V2 == 'Aves', paste0('A', lst.param$V3), paste0('M', lst.param$V3))
 
 ########################################################################################
@@ -12,9 +12,9 @@ lst.param$groupID <- ifelse(lst.param$V2 == 'Aves', paste0('A', lst.param$V3), p
 ########################################################################################
 # Read required datasets 
 ffiles <- c(here::here('outputs/EcologicalContinuities/Raster/Probs/EcologicalContinuities_Probability_Mammalia.tif'))
-ffiles <- c(ffiles, here::here(paste0('outputs/EcologicalContinuities/Raster/Probs/EcologicalContinuities_Probability_Mammalia_GroupID_',c(1:6),'.tif')))
+ffiles <- c(ffiles, here::here(paste0('outputs/EcologicalContinuities/Raster/Probs/EcologicalContinuities_Probability_Mammalia_GroupID_',c(1:11),'.tif')))
 rast <- terra::rast(ffiles)
-names(rast) <- c('All mammals', paste0('M', c(1:6)))
+names(rast) <- c('All mammals', paste0('M', c(1:11)))
 
 p1 <- ggplot() +
   tidyterra::geom_spatraster(data = rast) +
@@ -22,14 +22,14 @@ p1 <- ggplot() +
   tidyterra::scale_fill_whitebox_c(palette = 'viridi', name = 'Probability') +
   theme(legend.position = c(0.85, 0.25))
 # Add group icon
-p1 <- cowplot::ggdraw() +
-  cowplot::draw_image(here::here('figures/Phylopics/M1_LynxLynx.png'), x = -0.03, y = 0.37, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M2_MustelaLutreola.png'), x = 0.21, y = 0.39, scale = 0.08) +
-  cowplot::draw_image(here::here('figures/Phylopics/M3_Crocidura.png'), x = 0.45, y = 0.37, scale = 0.08) +
-  cowplot::draw_image(here::here('figures/Phylopics/M4_CapraIbex.png'), x = -0.26, y = -0.07, scale = 0.07) +
-  cowplot::draw_image(here::here('figures/Phylopics/M5_Nyctalus.png'), x = -0.03, y = -0.07, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M6_ArvicolaSapidus.png'), x = 0.21, y = -0.07, scale = 0.05) +
-  cowplot::draw_plot(p1)
+# p1 <- cowplot::ggdraw() +
+#   cowplot::draw_image(here::here('figures/Phylopics/M1_LynxLynx.png'), x = -0.03, y = 0.37, scale = 0.05) +
+#   cowplot::draw_image(here::here('figures/Phylopics/M2_MustelaLutreola.png'), x = 0.21, y = 0.39, scale = 0.08) +
+#   cowplot::draw_image(here::here('figures/Phylopics/M3_Crocidura.png'), x = 0.45, y = 0.37, scale = 0.08) +
+#   cowplot::draw_image(here::here('figures/Phylopics/M4_CapraIbex.png'), x = -0.26, y = -0.07, scale = 0.07) +
+#   cowplot::draw_image(here::here('figures/Phylopics/M5_Nyctalus.png'), x = -0.03, y = -0.07, scale = 0.05) +
+#   cowplot::draw_image(here::here('figures/Phylopics/M6_ArvicolaSapidus.png'), x = 0.21, y = -0.07, scale = 0.05) +
+#   cowplot::draw_plot(p1)
 p1
 ggsave(plot = p1, filename = here::here('figures/EcologicalContinuities_Mammalia.pdf'), dpi = 300)
 
@@ -43,7 +43,8 @@ for (g in unique(lst.param$groupID)) {
   val <- c()
   for (i in 1:nrow(sublst)){
     ffile <- readRDS(here::here(paste0('outputs/Indicators/PercOverlap-EC-StrictPA_', sublst$V2[i], '_GroupID_', sublst$V3[i], 
-                                       '_TransfoCoef_', sublst$V4[i], '_SuitThreshold_', sublst$V5[i], '_DispDist_', sublst$V6[i], 'km')))
+                                       '_TransfoCoef_', sublst$V4[i], '_SuitThreshold_', sublst$V5[i], '_DispDist_', sublst$V6[i],
+                                       'km_NormFlowThreshold_', sublst$V7[i])))
     val <- c(val, ffile$Perc.overlap.corrid.PAs)
   }
   overlap.full <- rbind(overlap.full, data.frame(GroupID = g,  val = val))
@@ -88,13 +89,14 @@ for (f in all.files) {
   ffile <- readRDS(here::here(paste0('outputs/Indicators/', f)))
   
   lb <- data.table::rbindlist(lapply(strsplit(f, '_'), function(x) {
-    return(data.frame(class = x[2], group = x[4], res = x[6], suit = x[8], dd = x[10]))
+    return(data.frame(class = x[2], group = x[4], res = x[6], suit = x[8], dd = x[10], normf = x[12]))
   }))
   PC.df <- rbind(PC.df, data.frame(Class = lb$class, 
                                    Group = lb$group,
                                    Rest.c = lb$res, 
                                    Suit.t = lb$suit, 
                                    DD =  lb$dd, 
+                                   NormF = lb$normf,
                                    PC = ffile$PCinter + ffile$PCintra,
                                    PCinter = ffile$PCinter, 
                                    PCintra = ffile$PCintra))
@@ -152,7 +154,7 @@ for (g in unique(lst.param$groupID)) {
     ffile <- readRDS(here::here(paste0('outputs/Indicators/', f)))
     
     lb <- data.table::rbindlist(lapply(strsplit(f, '_'), function(x) {
-      return(data.frame(Class = x[2], Group = x[4], Rest.c = x[6], Suit.t = x[8], DD = x[10]))
+      return(data.frame(Class = x[2], Group = x[4], Rest.c = x[6], Suit.t = x[8], DD = x[10], NormF = x[12]))
     }))
     tobind <- cbind(ffile$PC_i, lb)
     
@@ -175,7 +177,7 @@ for (g in unique(lst.param$groupID)) {
   dfmap <- rbind(dfmap, PC.mean.map)
 }
 
-dfmap$Class <- ifelse(dfmap$GroupID %in% c(paste0('M', c(1:6))), 'Mammalia', 'Aves')
+dfmap$Class <- ifelse(dfmap$GroupID %in% c(paste0('M', c(1:11))), 'Mammalia', 'Aves')
 dfmap.g <- dfmap #values per group 
 dfmap <- dfmap %>% #values per class
   group_by(SITECODE, Class) %>%
@@ -249,10 +251,10 @@ for (g in unique(dfmap.g$GroupID[dfmap.g$Class=='Mammalia'])) {
 }
 
 # Per group: Mammalia 
-p.intra.m <- gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, p7, ncol = 4)
+p.intra.m <- gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, ncol = 4)
 ggsave(plot = p.intra.m, filename = here::here('figures/Maps_Local_PCintra_Mammalia.pdf'), width = 15, height = 5)
 
-remove(list = paste0('p', c(1:7)))
+remove(list = paste0('p', c(1:11)))
 
 ############# PC_flux_k ###################
 idx = 1
@@ -311,10 +313,10 @@ for (g in unique(dfmap.g$GroupID[dfmap.g$Class=='Mammalia'])) {
   idx = idx + 1
 }
 # Per group: Mammalia 
-p.flux.m <- gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, p7, ncol = 4)
+p.flux.m <- gridExtra::grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, ncol = 4)
 ggsave(plot = p.flux.m, filename = here::here('figures/Maps_Local_PCflux_Mammalia.pdf'), width = 15, height = 5)
 
-remove(list = paste0('p', c(1:7)))
+remove(list = paste0('p', c(1:11)))
 
 ############# PC_connector_k ###################
 idx = 1

@@ -9,7 +9,7 @@
 # The output files are located in /outputs/Indicators folder 
 
 # Required general dataset 
-lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun.txt')) #table of all parameter combinations 
+lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun-step2.txt')) #table of all parameter combinations 
 all.ep <- sf::st_read(here::here('./data/raw-data/ProtectedAreas/STRICT_PROTECTIONS.shp')) #shapefile of protected areas
 all.ep.merge <- sf::st_union(all.ep) #merge all polygons 
 
@@ -17,7 +17,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
 
   # Read EC delineation
   corrid <- try(sf::st_read(here::here(paste0('outputs/EcologicalContinuities/Vector/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                              '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km.shp'))))
+                                              '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7], '.shp'))))
   corrid$corrid.area.km2 <- sf::st_area(corrid)/1000000
   
   if (sum(class(corrid) == 'try-error') == 0) {
@@ -28,16 +28,16 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
     inter$inter.area.km2 <- sf::st_area(inter)/1000000
     indic.con <- data.frame(Perc.overlap.corrid.PAs = as.numeric(sum(inter$inter.area.km2)/sum(corrid$corrid.area.km2))*100)
 
-    saveRDS(indic.con, here::here(paste0('outputs/ConnectivityDescriptors/PercOverlap-EC-StrictPA_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                         '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km')))
+    saveRDS(indic.con, here::here(paste0('outputs/Indicators/PercOverlap-EC-StrictPA_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
+                                         '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7])))
     
   } else {
     
     # If no EC was estimated, overlap is 0 
     indic.con <- data.frame(Perc.overlap.corrid.PAs = 0)
     
-    saveRDS(indic.con, here::here(paste0('outputs/ConnectivityDescriptors/PercOverlap-EC-StrictPA_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                         '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km')))
+    saveRDS(indic.con, here::here(paste0('outputs/Indicators/PercOverlap-EC-StrictPA_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
+                                         '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7])))
     
   }
 }
@@ -49,7 +49,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
 # The output files are located in /outputs/Indicators, /outputs/EdgeLists and /outputs/Networks folder 
 
 # Required general dataset 
-lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun.txt')) #table of all parameter combinations 
+lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun-step2.txt')) #table of all parameter combinations 
 all.ep <- sf::st_read(here::here('./data/raw-data/ProtectedAreas/STRICT_PROTECTIONS.shp')) #shapefile of protected areas 
 all.ep$site.area.km2 <- sf::st_area(all.ep)/1000000 #calculate PA area
 ep.dist <- readRDS(here::here('data/raw-data/ProtectedAreas/Distance_btw_StrictProtections')) #matrix of Euclidean distance between PAs
@@ -59,7 +59,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
 
   # Read EC delineation
   corrid <- try(sf::st_read(here::here(paste0('outputs/EcologicalContinuities/Vector/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                              '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km.shp'))))
+                                              '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7], '.shp'))))
   
   if (sum(class(corrid) == 'try-error') == 0) {
     
@@ -72,7 +72,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
     
     # Two PAs are connected if they belong to the same EC (1) and are closer than the group dispersal distance (2)
     
-    # (1) Get corridor and protected areas intersection
+    # (1) Get ecological continuities and protected areas intersection
     inter <- sf::st_intersection(all.ep, corrid)
     inter$inter.area.km2 <- sf::st_area(inter)/1000000 # get intersection area to remove marginal intersections 
     inter$prop <- inter$inter.area.km2/inter$site.area.km2*100 # get % of the site covered by the intersection 
@@ -92,8 +92,8 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
     edgelst.final <- edgelst.final[edgelst.final$dist.km2 <= lst.param[i, 6],] #remove edges longer than the DD 
     # Secondly, get geographical distance (actual shortest path) among potentially connected PAs to remove again edges longer than the dispersal distance
     # Layer preparation for shortest path calculation (from gdistance::shortestPath)
-    cost <- raster::raster(here::here(paste0('outputs/EcologicalContinuities/Raster//EcologicalContinuities_',lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                             '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6],'km.tif')))
+    cost <- raster::raster(here::here(paste0('outputs/EcologicalContinuities/Raster/EcologicalContinuities_',lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
+                                             '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7], '.tif')))
     idx <- cost == 1
     cost[idx] <- 1
     cost[!idx] <- 1000
@@ -113,10 +113,10 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
     # Generate and save the network 
     net <- igraph::graph_from_edgelist(as.matrix(edgelst.final[,c('from','to')]), directed = F)
     saveRDS(net, here::here(paste0('outputs/Networks/StrictPANetwork_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                   '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6])))
+                                   '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7])))
     # Save the edgelist
     write.csv(edgelst.final, here::here(paste0('outputs/EdgeLists/StrictPAEdgeList_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                               '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], '.csv')))
+                                               '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7], '.csv')))
   
   
     #####################################################################################################################
@@ -276,7 +276,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
     indic.con$PCintra <- PCintra
     
     saveRDS(indic.con, here::here(paste0('outputs/Indicators/IndicCon_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                         '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km')))
+                                         '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7])))
     
   } else { #if no EC has been estimated, only PC_intra can be calculated 
     
@@ -319,7 +319,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
     indic.con$PCintra <- sum(indic.con$PC_i$PC_intra_i)
     
     saveRDS(indic.con, here::here(paste0('outputs/Indicators/IndicCon_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                         '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km')))
+                                         '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7])))
     
   }
 }

@@ -14,8 +14,10 @@ combi.doable <- openxlsx::read.xlsx(here::here('data/derived-data/FunctionalGrou
 # Parameter setting 
 p.threshold <- seq(0.5, 0.7, by = 0.1) #threshold to define source from estimated probabilities of suitability 
 coef.c <- c(2, 4, 8, 16) #habitat suitability to resistance transformation coefficient
+norm.flow <- seq(0.7, 1, by = 0.1) #threshold to select pixels from the normalized flow 
 path.start <- here::here() #path to the root folder from which Omniscape algorithm will be run
 full.param <- data.frame()
+full.param.full <- data.frame()
 
 for (i in 1:nrow(combi.doable)) {
   
@@ -23,7 +25,7 @@ for (i in 1:nrow(combi.doable)) {
   k <- combi.doable$Nclus[i] #total number of groups for a class
 
   # Read species list
-  lst.sp <- openxlsx::read.xlsx(here::here(paste0('data/derived-data/FunctionalGroups/VertebrateSpecies-list_FoS_AcT_Morph_MovM_Aq_DD_LifeH_Diet_HabP_NHabP_Press_', g , '_GroupID_K=', k, '.xlsx')))
+  lst.sp <- openxlsx::read.xlsx(here::here(paste0('data/derived-data/FunctionalGroups/VertebrateSpecies-list_withTraits_', g , '_GroupID_K=', k, '.xlsx')))
   
   for (c in c(1:k)) { #for each group
     
@@ -54,6 +56,11 @@ for (i in 1:nrow(combi.doable)) {
     lst.param$clusID <- c 
     full.param <- rbind(full.param, lst.param)
     
+    lst.param.full <- expand.grid(TransfoCoef = coef.c, DD = seq.dd, SourceThre = p.threshold, NormFlowThre = norm.flow)
+    lst.param.full$Group <- g
+    lst.param.full$clusID <- c 
+    full.param.full <- rbind(full.param.full, lst.param.full)
+    
     for (j in 1:nrow(lst.param)) {
       
       transfocoef <- lst.param$TransfoCoef[j]
@@ -80,12 +87,19 @@ for (i in 1:nrow(combi.doable)) {
   }
 }
 
-# Generate the file listing all parameter combination, useful for batch running on distance cluster
+# Generate the file listing all parameter combination (without the normalized flow), useful for batch running on distance cluster
 full.param$jobID <- c(1:nrow(full.param))
 full.param <- full.param[, c("jobID","Group", "clusID", "TransfoCoef", "SourceThre", "DD")]
 full.param$DD <- as.character(full.param$DD)
 full.param <- as.matrix(full.param)
-write.table(full.param, here::here('data/derived-data/BatchRun/list-of-params-for-batchrun.txt'), row.names = F, col.names = F, quote = F)
+write.table(full.param, here::here('data/derived-data/BatchRun/list-of-params-for-batchrun-step1.txt'), row.names = F, col.names = F, quote = F)
+
+# Generate the file listing all parameter combination (with the normalized flow), useful for batch running on distance cluster
+full.param.full$jobID <- c(1:nrow(full.param.full))
+full.param.full <- full.param.full[, c("jobID","Group", "clusID", "TransfoCoef", "SourceThre", "DD", "NormFlowThre")]
+full.param.full$DD <- as.character(full.param.full$DD)
+full.param.full <- as.matrix(full.param.full)
+write.table(full.param.full, here::here('data/derived-data/BatchRun/list-of-params-for-batchrun-step2.txt'), row.names = F, col.names = F, quote = F)
 
 #####################################################################################################################
 ##################### 2. Julia script to run the Omniscape algorithm (TO BE RUN IN JULIA) ###########################
@@ -112,7 +126,8 @@ run_omniscape(filepath)
 # The delineation of ecological continuities are located in the /outputs/EcologicalContinuities/ folder
 
 # Required general dataset 
-lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun.txt')) #table of all parameter combinations 
+lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun-step1.txt')) #table of all parameter combinations 
+fnorm <- seq(0.7, 1, by = 0.1)
 
 for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably run on a distant cluster each combination in parallel 
   
@@ -120,24 +135,33 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
                                             '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], '/normalized_cum_currmap.tif')))
   flow.pot <- terra::rast(here::here(paste0('data/derived-data/OmniscapeOutput/OmniscapeOutput_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
                                             '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], '/flow_potential.tif')))
-  # Double thresholding to identify EC delineation : flow potential should be higher than the average flow potential and normalised flow should be higher or equal to 1
-  idx <- terra::values(flow.pot) < mean(na.omit(terra::values(flow.pot)))
-  norm.map[idx] <- 0
-  terra::values(norm.map) <- round( terra::values(norm.map), digits = 2)
-  norm.map[norm.map < 1] <- 0 
-  norm.map[norm.map >= 1] <- 1 
   
-  # Polygon disaggregation and saving (shapefile and raster formats)
-  poly <- terra::as.polygons(norm.map, dissolve = T)
-  poly <- poly[poly$normalized_cum_currmap == 1]
-  poly <- terra::disagg(poly)
-  if (length(poly) > 0) {
-    poly$corridorID <- c(1:length(poly))
-    terra::writeVector(poly, here::here(paste0('outputs/EcologicalContinuities/Vector/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                               '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km.shp')), filetype = 'ESRI Shapefile', overwrite = T)
+  # Double thresholding to identify EC delineation 
+  vals <- na.omit(terra::values(flow.pot))
+  vals <- vals[vals!= 0]
+  vals <- quantile(vals, probs = 0.05)
+  idx <- terra::values(flow.pot) < vals
+  
+  norm.map[idx] <- 0
     
-    terra::writeRaster(norm.map, here::here(paste0('outputs/EcologicalContinuities/Raster/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                                   '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km.tif')), overwrite = T)
+  for (f in fnorm) {
+    
+    norm.map[norm.map < f] <- 0 
+    norm.map[norm.map >= f] <- 1 
+  
+    # Polygon disaggregation and saving (shapefile and raster formats)
+    poly <- terra::as.polygons(norm.map, dissolve = T)
+    poly <- poly[poly$normalized_cum_currmap == 1]
+    poly <- terra::disagg(poly)
+    
+    if (length(poly) > 0) {
+      poly$corridorID <- c(1:length(poly))
+      terra::writeVector(poly, here::here(paste0('outputs/EcologicalContinuities/Vector/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
+                                                 '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', f, '.shp')), filetype = 'ESRI Shapefile', overwrite = T)
+      
+      terra::writeRaster(norm.map, here::here(paste0('outputs/EcologicalContinuities/Raster/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
+                                                     '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', f, '.tif')), overwrite = T)
+    }
   }
 }
 
@@ -147,7 +171,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
 # The probability rasters of ecological continuities are located in the /outputs/EcologicalContinuities/Raster/Probs/ folder
 
 # Required general dataset 
-lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun.txt')) #table of all parameter combinations 
+lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun-step2.txt')) #table of all parameter combinations 
 
 # List of all files of ecological continuities
 all.files <- list.files(here::here('outputs/EcologicalContinuities/Raster/'))
@@ -162,12 +186,12 @@ for (g in unique(paste(lst.param$V2, lst.param$V3))) { #loop on each group
   for (i in 1:nrow(sublst)) { 
     
     ffile <- all.files[grep(paste0('EcologicalContinuities_', sublst[i, 2], '_GroupID_', sublst[i, 3], '_TransfoCoef_', sublst[i, 4],'_SuitThreshold_',
-                                   sublst[i, 5], '_DispDist_', sublst[i, 6], 'km.tif'), all.files)] 
+                                   sublst[i, 5], '_DispDist_', sublst[i, 6], 'km_NormFlowThreshold_', sublst[i, 7], '.tif'), all.files)] 
     if (length(ffile) != 0) {
       
       # read EC delineation 
       corrid <- terra::rast(here::here(paste0('outputs/EcologicalContinuities/Raster/EcologicalContinuities_', sublst[i, 2], '_GroupID_', sublst[i, 3], '_TransfoCoef_', sublst[i, 4],
-                                              '_SuitThreshold_', sublst[i, 5], '_DispDist_', sublst[i, 6], 'km.tif')))
+                                              '_SuitThreshold_', sublst[i, 5], '_DispDist_', sublst[i, 6], 'km_NormFlowThreshold_', sublst[i, 7], '.tif')))
       grid.rast <- grid.rast + corrid
       ok <- ok + 1
     }
@@ -190,12 +214,12 @@ for (g in unique(lst.param$V2)) { #loop on each class
   for (i in 1:nrow(sublst)) { 
     
     ffile <- all.files[grep(paste0('EcologicalContinuities_', sublst[i, 2], '_GroupID_', sublst[i, 3], '_TransfoCoef_', sublst[i, 4],'_SuitThreshold_',
-                                   sublst[i, 5], '_DispDist_', sublst[i, 6], 'km.tif'), all.files)] 
+                                   sublst[i, 5], '_DispDist_', sublst[i, 6], 'km_NormFlowThreshold_', sublst[i, 7], '.tif'), all.files)] 
     if (length(ffile) != 0) {
       
       # read EC delineation
       corrid <- terra::rast(here::here(paste0('outputs/EcologicalContinuities/Raster/EcologicalContinuities_', sublst[i, 2], '_GroupID_', sublst[i, 3], '_TransfoCoef_', sublst[i, 4],
-                                              '_SuitThreshold_', sublst[i, 5], '_DispDist_', sublst[i, 6], 'km.tif')))
+                                              '_SuitThreshold_', sublst[i, 5], '_DispDist_', sublst[i, 6], 'km_NormFlowThreshold_', sublst[i, 7], '.tif')))
       grid.rast <- grid.rast + corrid
     }
   }

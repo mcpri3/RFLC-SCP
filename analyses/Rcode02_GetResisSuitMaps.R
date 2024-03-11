@@ -11,38 +11,47 @@
 combi.doable <- openxlsx::read.xlsx(here::here('data/derived-data/FunctionalGroups/List-of-clustering-schemes.xlsx')) # group number per class
 grid.fr <- sf::st_read(here::here('data/raw-data/Grids/ReferenceGrid_France_bin_1000m.gpkg')) # gridded map of France, 1km2 resolution
 grid.fr <- sf::st_centroid(grid.fr) # get pixel centroid
-occur <- readRDS(here::here('data/raw-data/Vertebrate-Species-GBIF-INPN-IUCNOccurrenceData_France_Res1000m_2010-2020')) #occurrence distribution per species
+occur <- readRDS(here::here('data/raw-data/Vertebrate-Species-OccurrenceData_France_Res1000m_2010-2020')) #occurrence distribution per species
 env <- terra::rast(here::here('data/raw-data/EnvironmentalVariables_France_Res1000m.tif'))
 
 ################################################################
 # Generate presences/pseudo-absences spatial layer per group 
 ################################################################
 # The spatial layers of presences/pseudo-absences are located in /data/derived-data/inputSDM/ folder 
+summary.data <- data.frame()
 
 for (i in 1:nrow(combi.doable)) { #loop on each group that generates a geopackage of group presences/pseudo-absences
   
   g <- combi.doable$group[i]
   k <- combi.doable$Nclus[i]
 
-  lst.sp <- openxlsx::read.xlsx(here::here(paste0('data/derived-data/FunctionalGroups/VertebrateSpecies-list_FoS_AcT_Morph_MovM_Aq_DD_LifeH_Diet_HabP_NHabP_Press_',g,'_GroupID_K=',
+  lst.sp <- openxlsx::read.xlsx(here::here(paste0('data/derived-data/FunctionalGroups/VertebrateSpecies-list_withTraits_',g,'_GroupID_K=',
                                                   k, '.xlsx')))
   
-  for (c in unique(lst.sp$cluster.id)) {
+  for (c in sort(unique(lst.sp$cluster.id))) {
     
     sub.lst <- lst.sp[lst.sp$cluster.id %in% c, ]
     sp <- gsub(' ', '_', sub.lst$SPECIES_NAME_SYNONYM)
     occur.c <- occur[, sp] 
+    
     if (class(occur.c) == 'numeric') {
       grid.fr$Nocc <- occur.c
+      nData.sp <- sum(occur.c)
+      names(nData.sp) <- sub.lst$SPECIES_NAME_SYNONYM
     } else {
+      nData.sp <- apply(occur.c, 2, sum)
       occur.c <- apply(occur.c, 1, sum)
       occur.c[occur.c>1] <- 1
       grid.fr$Nocc <- occur.c
     }
     
     sf::st_write(grid.fr, here::here(paste0('data/derived-data/inputSDM/OccurrenceData_France_', g, '_GroupID_K=', c, '_Res1000_2010-2020.gpkg')), driver = 'GPKG', delete_layer = T)
-  }
+    summary.data <- rbind(summary.data, data.frame(class = g, cluster.id = c, Npixel.group = sum(grid.fr$Nocc), species = names(nData.sp), Npixel = nData.sp))
+    
+    }
 }
+
+openxlsx::write.xlsx(summary.data, here::here('data/derived-data/inputSDM/SummaryOccurrenceData_GrpSp.xlsx'))
 
 ######################################################
 # Ensemble model parameter setting 
@@ -56,7 +65,8 @@ nCrossVal <- 5
 cv.perc <- 0.8 
 nperm.var.imp <- 3 
 ens.calc <- c('EMca')
-max.occ <- 50000
+nrep.PA <- 5
+TSS.min <- 0.3
 
 #####################################################################################################################
 #################################### 2. Ensemble model generation ###################################################
@@ -82,31 +92,17 @@ for (i in 1:nrow(combi.doable)) { #loop on each group, preferably run on a dista
     abs <- occur.full[occur.full$Nocc == 0,]
     occur <- occur.full[occur.full$Nocc == 1,]
     
-    # Check if subsampling presences is needed 
-    sample.presence = F
-    if (nrow(occur) > max.occ) { # if too many occurrences (i.e., > max.occ ), we subsample to gain speed 
-      sample.presence = T
-      n.abs <- max.occ
-      nrep.PA <- 3
-    } else {
-      n.abs <- ifelse(nrow(occur) < 5000, 5000, nrow(occur))
-      n.abs <- ifelse(nrow(occur) < 500, 500, n.abs)
-      nrep.PA <- ifelse(nrow(occur) < 500, 50, 3)
-      
-    }
-    
+    # Set the number of pseudo-absences to draw
+    n.abs <- ifelse(nrow(occur) <= 10000, 10000, nrow(occur))
+
     # Generate the TRUE/FALSE matrix required for biomod2 to work with user defined PAs 
     my.user.table = matrix(data = FALSE , ncol = nrep.PA, nrow = length(occur.full))
     for (eta in 1:nrep.PA) {
-      if (sample.presence) { #if subsampling presences is needed 
-        idx.p <- sample(1:length(occur), max.occ, replace = F)
-        my.user.table[idx.p, eta] <- TRUE
-      } else {
         my.user.table[1:length(occur), eta] <- TRUE
-      }
-      idx.p <- sample(1:length(abs), n.abs, prob = abs$sampE, replace = F) #sample pseudo-absences 
-      my.user.table[(idx.p+length(occur)), eta] <- TRUE
+        idx.p <- sample(1:length(abs), n.abs, prob = abs$sampE, replace = F) #sample pseudo-absences 
+        my.user.table[(idx.p+length(occur)), eta] <- TRUE
     }
+    
     # Put back together presences and pseudo-absences 
     occur <- rbind(occur, abs)
     occur <- occur[1:length(occur), "Nocc"]
@@ -125,8 +121,8 @@ for (i in 1:nrow(combi.doable)) { #loop on each group, preferably run on a dista
                                                   dir.name = './data/derived-data/outputSDM/')
     # Modelling options
     myBiomodOptions <- biomod2::BIOMOD_ModelingOptions()
-    myBiomodOptions@XGBOOST$max.depth <- 3
-    myBiomodOptions@RF$nodesize <- round(nrow(occur)/10)
+    myBiomodOptions@XGBOOST$max.depth <- 3 #modified to avoid overfitting
+    myBiomodOptions@RF$nodesize <- round(sum(occur.full$Nocc)/10) #modified to avoid overfitting
 
     # Individual model fitting
     myBiomodModelOut <- try(biomod2::BIOMOD_Modeling(bm.format = myBiomodData,
@@ -144,7 +140,7 @@ for (i in 1:nrow(combi.doable)) { #loop on each group, preferably run on a dista
                                                    em.by = 'all',
                                                    em.algo = ens.calc ,
                                                    metric.select = c('TSS'),
-                                                   metric.select.thresh = c(0.4),
+                                                   metric.select.thresh = TSS.min,
                                                    metric.eval = c('TSS', 'ROC'),
                                                    var.import = nperm.var.imp)
 
@@ -163,6 +159,9 @@ for (i in 1:nrow(combi.doable)) { #loop on each group, preferably run on a dista
 
   }
 }
+
+# Get model evaluation summary 
+rmarkdown::render(here::here('data/derived-data/outputSDM/SDMevaluation.Rmd'), params = list(TSS.min = TSS.min))
 
 #####################################################################################################################
 ###################################### 3. Calculation of resistance and source maps #################################
