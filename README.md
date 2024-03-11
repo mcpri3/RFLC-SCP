@@ -129,9 +129,9 @@ Please use the following citation:
 
 > Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P.,
 > Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L.,
-> Moreira, F., Dertien, J., & Thuiller, W. (in prep.). A robust
-> framework to assess landscape connectivity for systematic conservation
-> planning application.
+> Moreira, F., Dertien, J., Fernandez, N., & Thuiller, W. (in prep.). A
+> robust framework to assess landscape connectivity for systematic
+> conservation planning application.
 
 ## Contributing
 
