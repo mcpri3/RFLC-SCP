@@ -38,7 +38,7 @@ for (g in unique(sp.lst.traits$CLASS)) {
   
   # Select species 
   sp.tokeep <- unique(sp.lst.traits$SPECIES_NAME_SYNONYM[sp.lst.traits$CLASS == g])
-  sp.tokeep <- sort(gsub(' ', '_', sp.tokeep))
+  sp.tokeep <- gsub(' ', '_', sp.tokeep)
   suboccur <- occur[, sp.tokeep]
   
   # Select env. variables 
@@ -79,8 +79,7 @@ names(lst.traits) <- c('LifeHistory', 'ForagingBehaviour', 'Diet', 'DispersalCap
 for (g in unique(sp.lst.traits$CLASS)) {
   
   subtraits <- sp.lst.traits[sp.lst.traits$CLASS == g, ]
-  subtraits <- subtraits[order(subtraits$SPECIES_NAME_SYNONYM), ]
-  
+
   for (l in names(lst.traits)) {
     
     # Select column for the specific trait category
