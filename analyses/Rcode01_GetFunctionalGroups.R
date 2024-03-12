@@ -4,6 +4,19 @@
 # Functional group files are located in the data/derived-data/FunctionalGroups/ folder
 ################################################################################################################################
 
+
+#####################################################################################################################
+###################################### Prelim. Output folder creation  ##############################################
+#####################################################################################################################
+# Create the folder of the dissimilarity matrices if does not exist 
+if (!dir.exists(here::here('data/derived-data/DissimilarityMatrices'))) {
+  dir.create(here::here('data/derived-data/DissimilarityMatrices'))
+}
+# Create the folder of functional groups if does not exist 
+if (!dir.exists(here::here('data/derived-data/FunctionalGroups'))) {
+  dir.create(here::here('data/derived-data/FunctionalGroups'))
+}
+
 #################################################################################################
 # Import required datasets; see data/raw-data/README.html for detailed description of datasets 
 #################################################################################################
@@ -20,16 +33,6 @@ occur <- readRDS(here::here('data/raw-data/Vertebrate-Species-OccurrenceData_Fra
 ###########################################################
 # Run PCA-env to get environmental niche dissimilarity
 ###########################################################
-
-# Create the folder of the dissimilarity matrices if does not exist 
-if (!dir.exists(here::here('data/derived-data/DissimilarityMatrices'))) {
-  dir.create(here::here('data/derived-data/DissimilarityMatrices'))
-}
-# Create the folder of functional groups if does not exist 
-if (!dir.exists(here::here('data/derived-data/FunctionalGroups'))) {
-  dir.create(here::here('data/derived-data/FunctionalGroups'))
-}
-
 # PCA-env number 1 including abiotic conditions (i.e., topography and climatic conditions)
 for (g in unique(sp.lst.traits$CLASS)) {
   

@@ -5,6 +5,29 @@
 
 
 #####################################################################################################################
+###################################### Prelim. Output folder creation  ##############################################
+#####################################################################################################################
+# Create the folder of Omniscape parameter files if does not exist 
+if (!dir.exists(here::here('data/derived-data/OmniscapeParamFiles/'))) {
+  dir.create(here::here('data/derived-data/OmniscapeParamFiles/'))
+}
+# Create the folder of Omniscape outputs if does not exist 
+if (!dir.exists(here::here('data/derived-data/OmniscapeOutput/'))) {
+  dir.create(here::here('data/derived-data/OmniscapeOutput/'))
+}
+# Create the folder of parameter combinations if does not exist 
+if (!dir.exists(here::here('data/derived-data/BatchRun/'))) {
+  dir.create(here::here('data/derived-data/BatchRun/'))
+}
+# Create the folder of ecological continuities if does not exist 
+if (!dir.exists(here::here('outputs/EcologicalContinuities/'))) {
+  dir.create(here::here('outputs/EcologicalContinuities/'))
+  dir.create(here::here('outputs/EcologicalContinuities/Raster/'))
+  dir.create(here::here('outputs/EcologicalContinuities/Raster/Probs'))
+  dir.create(here::here('outputs/EcologicalContinuities/Vector/'))
+}
+
+#####################################################################################################################
 ###################################### 1. Generate Omniscape parameter files ########################################
 #####################################################################################################################
 # The parameter files are located in the /data/derived-data/OmniscapeParamFiles folder

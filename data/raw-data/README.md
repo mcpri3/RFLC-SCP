@@ -8,9 +8,9 @@ editor_options:
 
 This folder contains raw data used as inputs of the workflow, including:
 
--   VertebrateSpecies-list_FoS_AcT_Morph_MovM_Aq_DD_LifeH_Diet_HabP_NHabP_Press.xlsx
-    (excel file): Species list (149 birds and 55 mammals) with their
-    taxonomy and traits. Column specification:
+-   VertebrateSpecies-list_withTraits.xlsx (excel file): Species list
+    (141 birds and 52 mammals) with their taxonomy and traits. Column
+    specification:
 
     -   CLASS: species class
     -   ORDER: species order
@@ -20,16 +20,14 @@ This folder contains raw data used as inputs of the workflow, including:
     -   FORAG.STRAT.X: foraging strategy X (binary variable)
     -   ACT.TIME.X: activity time X (binary variable)
     -   MORPHO.BODYMASS.G: body mass in grams
-    -   MOV.MODE.X: movement mode X (binary variable)
-    -   AQUATIC: aquatic habitat dependence (binary variable)
     -   DISPERSAL_KM: mean natal dispersal distance in kilometers per
         dispersal event
     -   LIFE.HIST.OFFSPRING_PER_YEAR_N: number of offsprings produced
         per year
-    -   DIET.BREADTH: number of diet items eaten
-    -   HAB.PREF.BREADTH: number of preferred habitats
-    -   NEST.HAB.BREADTH: number of preferred nesting habitats
-    -   PRESSURE.X : vulnerability to pressure X (binary variable)
+    -   DIET.X: diet item eaten (binary variable)
+    -   HAB.PREF.X: preference for habitat type X (binary variable), see
+        below for code specification
+    -   NEST.HAB.X: preference for nesting habitat X (binary variable)
 
 -   EnvironmentalVariables_France_Res1000m (RDS file): Spatialized table
     of environmental variables (554783 pixels of 1km2, each row is a
@@ -69,8 +67,8 @@ This folder contains raw data used as inputs of the workflow, including:
 
 ![](images/TableofLandSystCode.png)
 
--   Vertebrate-Species-GBIF-INPN-IUCNOccurrenceData_France_Res1000m_2010-2020
-    (RDS file): Spatialized table of presences / pseudo-absences (554783
+-   Vertebrate-Species-OccurrenceData_France_Res1000m_2010-2020 (RDS
+    file): Spatialized table of presences / pseudo-absences (554783
     pixels of 1km2 pixel, each row is a pixel x 204 species, each column
     is the presence/pseudo-absence distribution for a species). Pixel
     order in that table is the same as the pixel order in

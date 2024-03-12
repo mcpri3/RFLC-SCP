@@ -4,6 +4,22 @@
 ############################################################################################################################################################
 
 #####################################################################################################################
+###################################### Prelim. Output folder creation  ##############################################
+#####################################################################################################################
+
+# Create the folder of connectivity metrics if does not exist 
+if (!dir.exists(here::here('outputs/Indicators/'))) {
+  dir.create(here::here('outputs/Indicators/'))
+}
+# Create the folder of edge lists if does not exist 
+if (!dir.exists(here::here('outputs/EdgeLists/'))) {
+  dir.create(here::here('outputs/EdgeLists/'))
+}
+# Create the folder of networks if does not exist 
+if (!dir.exists(here::here('outputs/Networks/'))) {
+  dir.create(here::here('outputs/Networks/'))
+}
+#####################################################################################################################
 ############### 1. Calculate the % of overlap between ecological continuities and protected areas ###################
 #####################################################################################################################
 # The output files are located in /outputs/Indicators folder 

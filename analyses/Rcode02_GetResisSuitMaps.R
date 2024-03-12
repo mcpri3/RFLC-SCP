@@ -3,6 +3,26 @@
 #  and 3. calculates resistance and source rasters 
 ############################################################################################################################################################
 
+
+#####################################################################################################################
+###################################### Prelim. Output folder creation  ##############################################
+#####################################################################################################################
+# Create the folder of SDM input data if does not exist 
+if (!dir.exists(here::here('data/derived-data/inputSDM/'))) {
+  dir.create(here::here('data/derived-data/inputSDM/'))
+}
+# Create the folder of SDM output data if does not exist 
+if (!dir.exists(here::here('data/derived-data/outputSDM/'))) {
+  dir.create(here::here('data/derived-data/outputSDM/'))
+}
+# Create the folder of source layers if does not exist 
+if (!dir.exists(here::here('data/derived-data/SourceLayers/'))) {
+  dir.create(here::here('data/derived-data/SourceLayers/'))
+}
+# Create the folder of resistance layers data if does not exist 
+if (!dir.exists(here::here('data/derived-data/ResistanceSurfaces/'))) {
+  dir.create(here::here('data/derived-data/ResistanceSurfaces/'))
+}
 #####################################################################################################################
 ###################################### 1. Data preparation / Parameter setting ######################################
 #####################################################################################################################
