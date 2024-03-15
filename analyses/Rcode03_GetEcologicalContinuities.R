@@ -229,27 +229,14 @@ for (g in unique(paste(lst.param$V2, lst.param$V3))) { #loop on each group
 }
 
 ############### PER CLASS ################
+lst.rast.full <- list.files(here::here(paste0('outputs/EcologicalContinuities/Raster/Probs/')))
+lst.rast.full <- lst.rast.full[grep('GroupID_', lst.rast.full)]
+
 for (g in unique(lst.param$V2)) { #loop on each class
   
-  sublst <- lst.param[lst.param$V2 == g, ]
-  grid.rast <- terra::rast(here::here('data/raw-data/Grids/ReferenceGrid_France_bin_1000m.tif'))
-
-  for (i in 1:nrow(sublst)) { 
-    
-    ffile <- all.files[grep(paste0('EcologicalContinuities_', sublst[i, 2], '_GroupID_', sublst[i, 3], '_TransfoCoef_', sublst[i, 4],'_SuitThreshold_',
-                                   sublst[i, 5], '_DispDist_', sublst[i, 6], 'km_NormFlowThreshold_', sublst[i, 7], '.tif'), all.files)] 
-    if (length(ffile) != 0) {
-      
-      # read EC delineation
-      corrid <- terra::rast(here::here(paste0('outputs/EcologicalContinuities/Raster/EcologicalContinuities_', sublst[i, 2], '_GroupID_', sublst[i, 3], '_TransfoCoef_', sublst[i, 4],
-                                              '_SuitThreshold_', sublst[i, 5], '_DispDist_', sublst[i, 6], 'km_NormFlowThreshold_', sublst[i, 7], '.tif')))
-      grid.rast <- grid.rast + corrid
-    }
-  }
-  
-  ntest <- nrow(sublst)
-  grid.rast <- grid.rast / ntest
-  
+  lst.rast <- lst.rast.full[grep(g, lst.rast.full)]
+  grid.rast <- terra::rast(here::here(paste0('outputs/EcologicalContinuities/Raster/Probs/', lst.rast)))
+  grid.rast <- sum(grid.rast)/length(lst.rast)
   terra::writeRaster(grid.rast, here::here(paste0('outputs/EcologicalContinuities/Raster/Probs/EcologicalContinuities_Probability_', g, '.tif')), overwrite = T)
   
 }

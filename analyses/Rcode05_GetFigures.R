@@ -22,14 +22,19 @@ p1 <- ggplot() +
   tidyterra::scale_fill_whitebox_c(palette = 'viridi', name = 'Probability') +
   theme(legend.position = c(0.85, 0.25))
 # Add group icon
-# p1 <- cowplot::ggdraw() +
-#   cowplot::draw_image(here::here('figures/Phylopics/M1_LynxLynx.png'), x = -0.03, y = 0.37, scale = 0.05) +
-#   cowplot::draw_image(here::here('figures/Phylopics/M2_MustelaLutreola.png'), x = 0.21, y = 0.39, scale = 0.08) +
-#   cowplot::draw_image(here::here('figures/Phylopics/M3_Crocidura.png'), x = 0.45, y = 0.37, scale = 0.08) +
-#   cowplot::draw_image(here::here('figures/Phylopics/M4_CapraIbex.png'), x = -0.26, y = -0.07, scale = 0.07) +
-#   cowplot::draw_image(here::here('figures/Phylopics/M5_Nyctalus.png'), x = -0.03, y = -0.07, scale = 0.05) +
-#   cowplot::draw_image(here::here('figures/Phylopics/M6_ArvicolaSapidus.png'), x = 0.21, y = -0.07, scale = 0.05) +
-#   cowplot::draw_plot(p1)
+p1 <- cowplot::ggdraw() +
+  cowplot::draw_image(here::here('figures/Phylopics/M1_Canislupus.png'), x = -0.07, y = 0.31, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M2_LutraLutra.png'), x = 0.13, y = 0.31, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M3_Lynxlynx.png'), x = 0.33, y = 0.315, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M4_RupicapraRupicapra.png'), x = -0.27, y = 0.077, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M5_PipistrellusPipistrellus.png'), x = -0.07, y = 0.07, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M6_Eliomysquercinus.png'), x = 0.13, y = 0.076, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M7_Crociduraleucodon.png'), x = 0.33, y = 0.075, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M8_Galemyspyrenaicus.png'), x = -0.27, y = -0.16, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M9_Marmotamarmota.png'), x = -0.07, y = -0.155, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M10_Oryctolaguscuniculus.png'), x = 0.13, y = -0.155, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M11_Castorfiber.png'), x = 0.33, y = -0.13, scale = 0.07) +
+  cowplot::draw_plot(p1)
 p1
 ggsave(plot = p1, filename = here::here('figures/EcologicalContinuities_Mammalia.pdf'), dpi = 300)
 
@@ -62,7 +67,7 @@ df.plot.h <- overlap.full %>%
 
 df.plot <- left_join(df.plot.m, df.plot.l, by = 'GroupID')
 df.plot <- left_join(df.plot, df.plot.h, by = 'GroupID')
-df.plot$GroupID <- factor(df.plot$GroupID, levels = c(paste0('M', 1:8), paste0('A', 1:23)))
+df.plot$GroupID <- factor(df.plot$GroupID, levels = c(paste0('M', 1:11), paste0('A', 1:21)))
 
 p0 <- ggplot(df.plot,aes(x=GroupID)) + 
   geom_bar(aes(y= val), stat="identity", fill = 'grey', col = 'darkgrey') +

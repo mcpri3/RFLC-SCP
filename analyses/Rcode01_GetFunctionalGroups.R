@@ -47,7 +47,7 @@ for (g in unique(sp.lst.traits$CLASS)) {
   
   # Calculate niche dissimilarity 
   mat.dist <- speciesDistanceOverlap(mat.overlap.object = list(tab.PA = suboccur, tab.env = subenv))
-  saveRDS(mat.dist, here::here(paste0('data/derived-data/DissimilarityMatrices/Vertebrate-Species_EnvNiche_PCA-env_', g,'_AbioticConditions')))
+  saveRDS(mat.dist, here::here(paste0('data/derived-data/DissimilarityMatrices/Vertebrate-Species_EnvNiche_', g,'_AbioticConditions')))
 } 
 
 # # PCA-env number 2 including land use (i.e., land system and linear structures)
@@ -64,7 +64,7 @@ for (g in unique(sp.lst.traits$CLASS)) {
 #   
 #   # Calculate niche dissimilarity 
 #   mat.dist <- speciesDistanceOverlap(mat.overlap.object = list(tab.PA = suboccur, tab.env = subenv))
-#   saveRDS(mat.dist, here::here(paste0('data/derived-data/DissimilarityMatrices/Vertebrate-Species_EnvNiche_PCA-env_', g,'_LandUse')))
+#   saveRDS(mat.dist, here::here(paste0('data/derived-data/DissimilarityMatrices/Vertebrate-Species_EnvNiche_', g,'_LandUse')))
 # } 
 
 
@@ -214,7 +214,7 @@ combi.doable <- openxlsx::read.xlsx(here::here('data/derived-data/FunctionalGrou
 for (i in 1:nrow(combi.doable)) {
   g <- combi.doable$group[i]
   k <- combi.doable$Nclus[i]
-  rmarkdown::render(here::here('data/derived-data/FunctionalGroups/GroupComposition.Rmd'), output_format = 'word_document', 
+  rmarkdown::render(here::here('data/derived-data/FunctionalGroups/GroupComposition.Rmd'), output_format = 'word_document',
                   output_file = sprintf('GroupComposition_%s_K=%s.docx', g, k), 
                   params = list(group = g, Nclus = k))
 }
