@@ -90,16 +90,14 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
     
     # (1) Get ecological continuities and protected areas intersection
     inter <- sf::st_intersection(all.ep, corrid)
-    inter$inter.area.km2 <- sf::st_area(inter)/1000000 # get intersection area to remove marginal intersections 
-    inter$prop <- inter$inter.area.km2/inter$site.area.km2*100 # get % of the site covered by the intersection 
-    inter <- inter[as.numeric(inter$prop) > 10, ] # intersection must cover at least 10% of the site to be accepted
     inter.final <- sf::st_drop_geometry(inter)
+    inter.final$SITECODE <- paste(inter.final$SITECODE, inter.final$corridorID, sep = '-') 
     inter.final <- inter.final[, c('SITECODE','SITENAME','corridorID')]
     colnames(inter.final)[colnames(inter.final) == 'corridorID'] <- 'inCorrid'
     # Get the full edge list from sites intersecting the same EC
     edgelst.final <- group_by(inter.final, inCorrid) %>% do(get.edgelst(.)) %>% data.frame
-    edgelst.final <- left_join(edgelst.final, sf::st_drop_geometry(corrid)[, c('corridorID', 'corrid.area.km2')], 
-                               by = c('inCorrid'='corridorID')) #add EC info to the edge list 
+    # edgelst.final <- left_join(edgelst.final, sf::st_drop_geometry(corrid)[, c('corridorID', 'corrid.area.km2')], 
+    #                            by = c('inCorrid'='corridorID')) #add EC info to the edge list 
     
     # (2) Get first euclidean distance among potentially connected PAs to remove edges longer than the dispersal distance 
     edgelst.final$rowid <- c(1:nrow(edgelst.final))
@@ -152,16 +150,22 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
     
     # Get area of suitable habitat in each PA 
     inter.ep.in <- sf::st_intersection(all.ep, suit.hab)
+    inter.ep.in <- sf::st_intersection(inter.ep.in, corrid) 
+    inter.ep.in$SITECODE <- paste(inter.ep.in$SITECODE, inter.ep.in$corridorID, sep ='-') 
     inter.ep.in$area.suit <- as.numeric(sf::st_area(inter.ep.in)/1000000)
     inter.ep.in <- sf::st_drop_geometry(inter.ep.in[, c('SITECODE', 'area.suit')])
     
     # Get local PC_intra 
+    interm <- sf::st_drop_geometry(inter.ep.in)
+    interm$PC_intra_i <- interm$area.suit * interm$area.suit
+    interm$SITECODE <- unlist(lapply(strsplit(interm$SITECODE, '-'), function(x){return(x[1])}))
+    ssum <- function(df) {return(data.frame(SITECODE = unique(df$SITECODE),PC_intra_i = sum(df$PC_intra_i)))}
+    interm <- group_by(interm, SITECODE) %>% do(ssum(.)) %>% data.frame
     PC_intra_i <- data.frame(SITECODE = all.ep$SITECODE)
-    PC_intra_i <- dplyr::left_join(PC_intra_i, sf::st_drop_geometry(inter.ep.in), by = 'SITECODE')
-    PC_intra_i$PC_intra_i <- PC_intra_i$area.suit * PC_intra_i$area.suit/A^2
+    PC_intra_i <- dplyr::left_join(PC_intra_i, interm, by = 'SITECODE')
     PC_intra_i$PC_intra_i[is.na(PC_intra_i$PC_intra_i)] <- 0
     PC_intra_i <- PC_intra_i[, c('SITECODE', 'PC_intra_i')]
-    
+ 
     # Join to the edge list for further calculation 
     edgelst.final <- left_join(edgelst.final, inter.ep.in, by = c('from' = 'SITECODE'))
     colnames(edgelst.final)[colnames(edgelst.final) == 'area.suit'] <- "area.suit.from.km2"
@@ -217,8 +221,9 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
         short.p <- all.short.p[all.short.p$from %in% p,]
         short.p$pc <- short.p$area.suit.from.km2 * short.p$area.suit.to.km2  * 1
         
-        PC_flux_i$PC_flux_i[PC_flux_i$SITECODE %in% p] <- (2*sum(sublst$pc) + 2*sum(short.p$pc))/A^2 #multiplied by 2 here because path can go in two directions : i->j and j->i
-        
+        # sum of the two
+        pp <- unlist(strsplit(p, '-'))[1]
+        PC_flux_i$PC_flux_i[PC_flux_i$SITECODE %in% pp] <- (2*sum(sublst$pc) + 2*sum(short.p$pc))/A^2 #multiplied by 2 here because path can go in two directions : i->j and j->i
       }
       
       # Get local PC_connector 
@@ -227,13 +232,15 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
         PC_connector_i$PC_connector_i <- 0
         
         foreach::foreach(p=names(V(net))) %do% {
-          idx <-  as.data.frame(all.short.p)[, p] 
+          pp <- gsub('-', '.', p)
+          idx <-  as.data.frame(all.short.p)[, pp] 
           subshort <- all.short.p[idx > 0, ]
           
           if (nrow(subshort) != 0) {
-            subshort$num.path.p <- as.data.frame(subshort)[, p] 
+            subshort$num.path.p <- as.data.frame(subshort)[, pp] 
             subshort$pc <- (subshort$area.suit.from.km2 * subshort$area.suit.to.km2 * 1) * subshort$num.path.p/subshort$num.path #to account for path redundancy 
-            PC_connector_i$PC_connector_i[PC_connector_i$SITECODE %in% p] <- sum(subshort$pc)/A^2
+            pp <- unlist(strsplit(p, '-'))[1]
+            PC_connector_i$PC_connector_i[PC_connector_i$SITECODE %in% pp] <- sum(subshort$pc)/A^2
           } 
         }
       } else {
@@ -264,7 +271,8 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
         # only direct flux
         sublst <- edgelst.final[edgelst.final$from %in% p | edgelst.final$to %in% p,]
         sublst$pc <- sublst$area.suit.from.km2 * sublst$area.suit.to.km2 * 1 #assuming pij = 1 when link exists 
-        PC_flux_i$PC_flux_i[PC_flux_i$SITECODE %in% p] <- (2*sum(sublst$pc))/A^2 #multiplied by 2 here because path can go in two directions : i->j and j->i
+        pp <- unlist(strsplit(p, '-'))[1]
+        PC_flux_i$PC_flux_i[PC_flux_i$SITECODE %in% pp] <- (2*sum(sublst$pc))/A^2 #multiplied by 2 here because path can go in two directions : i->j and j->i
       }
       
       # Get local PC_connector 
@@ -294,34 +302,11 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
     saveRDS(indic.con, here::here(paste0('outputs/Indicators/IndicCon_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
                                          '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7])))
     
-  } else { #if no EC has been estimated, only PC_intra can be calculated 
+  } else { #if no EC has been estimated
     
-    # Read suitable habitat for the group 
-    suit.hab <- terra::rast(here::here(paste0('data/derived-data/SourceLayers/SourceLayer_', lst.param[i, 2],'_GroupID_', lst.param[i, 3], 
-                                              '_SuitThreshold_', lst.param[i, 5], '.tif')))
-    suit.hab <- terra::as.polygons(suit.hab)
-    names(suit.hab) <- "val"
-    suit.hab <- suit.hab[suit.hab$val == 1]
-    suit.hab <- sf::st_as_sf(suit.hab)
-    suit.hab <- sf::st_transform(suit.hab, sf::st_crs(all.ep))
-    
-    # Total area of suitable habitat
-    A <- as.numeric(sf::st_area(suit.hab)/1000000)
-    
-    # Get area of suitable habitat in each PA 
-    inter.ep.in <- sf::st_intersection(all.ep, suit.hab)
-    inter.ep.in$area.suit <- as.numeric(sf::st_area(inter.ep.in)/1000000)
-    inter.ep.in <- sf::st_drop_geometry(inter.ep.in[, c('SITECODE', 'area.suit')])
-    
-    # Get local PC_intra
-    PC_intra_i <- data.frame(SITECODE = all.ep$SITECODE)
-    PC_intra_i <- dplyr::left_join(PC_intra_i, sf::st_drop_geometry(inter.ep.in), by = 'SITECODE')
-    PC_intra_i$PC_intra_i <- PC_intra_i$area.suit * PC_intra_i$area.suit/A^2
-    PC_intra_i$PC_intra_i[is.na(PC_intra_i$PC_intra_i)] <- 0
-    PC_intra_i <- PC_intra_i[, c('SITECODE', 'PC_intra_i')]
-    
-    # Other PC metrics are equal to 0 
-    PC_i <- PC_intra_i
+    # All PC metrics are equal to 0 
+    PC_i <- data.frame(SITECODE = all.ep$SITECODE)
+    PC_i$PC_intra_i <- 0
     PC_i$PC_flux_i <- 0
     PC_i$PC_connector_i <- 0
     PC_i <- dplyr::left_join(PC_i, sf::st_drop_geometry(all.ep), by = 'SITECODE')

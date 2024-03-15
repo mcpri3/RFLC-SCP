@@ -11,5 +11,7 @@
 #'
 #' @examples
 get.dist <- function(df, mat.dist = ep.dist) {
-  return(data.frame(dist = as.numeric(mat.dist[colnames(mat.dist) == df$from, rownames(mat.dist) == df$to])))
+  pfrom <- unlist(strsplit(df$from, '-'))[1]
+  pto <- unlist(strsplit(df$to, '-'))[1]
+  return(data.frame(dist = as.numeric(ep.dist[colnames(ep.dist) == pfrom, rownames(ep.dist) == pto])))
 }

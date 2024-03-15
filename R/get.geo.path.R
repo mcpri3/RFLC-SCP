@@ -14,11 +14,14 @@
 #' @examples
 get.geo.path <- function(df, maxdisp, all.patches = all.ep) {
   
+  pfrom <- unlist(strsplit(df$from, '-'))[1]
+  pto <- unlist(lapply(strsplit(df$to, '-'), function(x){return(x[1])}))
+  
   # Paths are calculated border to border, so we extract contour coordinates of each polygon (origin and destination) 
   # to then identify closest points for each origin-destination combination 
-  origin <- sf::st_coordinates(all.patches[all.patches$SITECODE == unique(df$from),]) #contour points 
-  if (nrow(origin) > 4000) { #resample points if too many, otherwise memory limitation 
-    topick <- seq(1, nrow(origin), by = 4) #one every four points are kept
+  origin <- sf::st_coordinates(all.patches[all.patches$SITECODE == unique(pfrom),]) #contour points 
+  if (nrow(origin) > 2000) { #resample points if too many, otherwise memory limitation 
+    topick <- seq(1, nrow(origin), by = 500) #one every four points are kept
     origin <- origin[topick, ]
   }
   origin2 <- as.data.frame(origin)
@@ -26,10 +29,10 @@ get.geo.path <- function(df, maxdisp, all.patches = all.ep) {
   
   goal2 <- data.frame()
   n <- 1
-  for (p in unique(df$to)) {
+  for (p in unique(pto)) {
     goal <- sf::st_coordinates(all.patches[all.patches$SITECODE %in% p, ]) # contour points
-    if (nrow(goal) > 4000) { #resample points if too many, otherwise memory limitation 
-      topick <- seq(1, nrow(goal), by = 4) #one every four points are kept
+    if (nrow(goal) > 2000) { #resample points if too many, otherwise memory limitation 
+      topick <- seq(1, nrow(goal), by = 500) #one every four points are kept
       goal <- goal[topick, ]
     }
     goal <- as.data.frame(goal)
@@ -71,7 +74,7 @@ get.geo.path <- function(df, maxdisp, all.patches = all.ep) {
     sPVector <- shortestPaths[[1]]
     coords <- raster::xyFromCell(cost, sPVector)
     linesList[[p]] <- sf::st_linestring(x = coords)
-    names(linesList)[[p]] <- paste0(unique(df$from), '_', all.patches$SITECODE[all.patches$SITECODE %in% unique(df$to)][s])
+    names(linesList)[[p]] <- paste0(unique(df$from), '_', unique(df$to)[s])
     p <- p + 1
   }
   
@@ -88,10 +91,6 @@ get.geo.path <- function(df, maxdisp, all.patches = all.ep) {
     sf::st_crs(LinesObject) <- sf::st_crs(all.patches)
     LinesObject$Lgth.km2 <- as.numeric(sf::st_length(LinesObject)/1000)
     LinesObject$from_to <- names(linesList)[idx]
-    
-    # sf::st_write(LinesObject, here::here(paste0('outputs/temp',nme.dir,'/LCP_',lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-    #                                             '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6],'km_From_', unique(df$from), '.shp')), delete_layer = T)
-    # 
     
     return(data.frame(from = strsplit(names(linesList)[idx], '_')[[1]][1], to =  unlist(lapply(names(linesList)[idx], function(x) {
       x <- strsplit(x, '_') 
