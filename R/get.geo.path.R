@@ -20,10 +20,8 @@ get.geo.path <- function(df, maxdisp, all.patches = all.ep) {
   # Paths are calculated border to border, so we extract contour coordinates of each polygon (origin and destination) 
   # to then identify closest points for each origin-destination combination 
   origin <- sf::st_coordinates(all.patches[all.patches$SITECODE == unique(pfrom),]) #contour points 
-  if (nrow(origin) > 2000) { #resample points if too many, otherwise memory limitation 
-    topick <- seq(1, nrow(origin), by = 500) #one every four points are kept
-    origin <- origin[topick, ]
-  }
+  topick <- seq(1, nrow(origin), by = ceiling(nrow(origin)/100)) #keep 100 points 
+  origin <- origin[topick, ]
   origin2 <- as.data.frame(origin)
   origin2$rowID <- c(1:nrow(origin2))
   
@@ -31,10 +29,8 @@ get.geo.path <- function(df, maxdisp, all.patches = all.ep) {
   n <- 1
   for (p in unique(pto)) {
     goal <- sf::st_coordinates(all.patches[all.patches$SITECODE %in% p, ]) # contour points
-    if (nrow(goal) > 2000) { #resample points if too many, otherwise memory limitation 
-      topick <- seq(1, nrow(goal), by = 500) #one every four points are kept
-      goal <- goal[topick, ]
-    }
+    topick <- seq(1, nrow(goal), by = ceiling(nrow(goal)/100)) #keep 100 points 
+    goal <- goal[topick, ]
     goal <- as.data.frame(goal)
     goal <- goal[, c('X', 'Y', 'L3')]
     goal$L3 <- n 
