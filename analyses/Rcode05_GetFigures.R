@@ -20,24 +20,23 @@ p1 <- ggplot() +
   tidyterra::geom_spatraster(data = rast) +
   facet_wrap(~lyr, ncol = 4) +
   tidyterra::scale_fill_whitebox_c(palette = 'viridi', name = 'Probability') +
-  theme(legend.position = c(0.85, 0.25))
+  cowplot::theme_cowplot() 
 # Add group icon
 p1 <- cowplot::ggdraw() +
-  cowplot::draw_image(here::here('figures/Phylopics/M1_Canislupus.png'), x = -0.07, y = 0.31, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M2_LutraLutra.png'), x = 0.13, y = 0.31, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M3_Lynxlynx.png'), x = 0.33, y = 0.315, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M4_RupicapraRupicapra.png'), x = -0.27, y = 0.077, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M5_PipistrellusPipistrellus.png'), x = -0.07, y = 0.07, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M6_Eliomysquercinus.png'), x = 0.13, y = 0.076, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M7_Crociduraleucodon.png'), x = 0.33, y = 0.075, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M8_Galemyspyrenaicus.png'), x = -0.27, y = -0.16, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M9_Marmotamarmota.png'), x = -0.07, y = -0.155, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M10_Oryctolaguscuniculus.png'), x = 0.13, y = -0.155, scale = 0.05) +
-  cowplot::draw_image(here::here('figures/Phylopics/M11_Castorfiber.png'), x = 0.33, y = -0.13, scale = 0.07) +
+  cowplot::draw_image(here::here('figures/Phylopics/M1_Canislupus.png'), x = -0.07, y = 0.343, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M2_LutraLutra.png'), x = 0.13, y = 0.345, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M3_Lynxlynx.png'), x = 0.33, y = 0.35, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M4_RupicapraRupicapra.png'), x = -0.27, y = 0.08, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M5_PipistrellusPipistrellus.png'), x = -0.078, y = 0.08, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M6_Eliomysquercinus.png'), x = 0.13, y = 0.085, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M7_Crociduraleucodon.png'), x = 0.33, y = 0.078, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M8_Galemyspyrenaicus.png'), x = -0.275, y = -0.18, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M9_Marmotamarmota.png'), x = -0.07, y = -0.175, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M10_Oryctolaguscuniculus.png'), x = 0.13, y = -0.175, scale = 0.05) +
+  cowplot::draw_image(here::here('figures/Phylopics/M11_Castorfiber.png'), x = 0.33, y = -0.155, scale = 0.07) +
   cowplot::draw_plot(p1)
 p1
 ggsave(plot = p1, filename = here::here('figures/EcologicalContinuities_Mammalia.pdf'), dpi = 300)
-
 
 ##########################################################################################################################
 ################### Percentage of overlap between ecological continuities and protected areas ############################
@@ -57,13 +56,13 @@ for (g in unique(lst.param$groupID)) {
 
 df.plot.m <- overlap.full %>% 
   group_by(GroupID) %>%
-  summarise(val = mean(val))
+  summarise(val = median(val))
 df.plot.l <- overlap.full %>% 
   group_by(GroupID) %>%
-  summarise(IClow = min(val))
+  summarise(IClow = quantile(val, probs = 0.025))
 df.plot.h <- overlap.full %>% 
   group_by(GroupID) %>%
-  summarise(IChigh = max(val))
+  summarise(IChigh = quantile(val, probs = 0.975))
 
 df.plot <- left_join(df.plot.m, df.plot.l, by = 'GroupID')
 df.plot <- left_join(df.plot, df.plot.h, by = 'GroupID')
@@ -111,7 +110,7 @@ PC.df$GroupID <- ifelse(PC.df$Class == 'Aves', paste0('A', PC.df$Group), paste0(
 
 PC.mean <- PC.df %>%
   group_by(GroupID) %>%
-  summarise_at(.vars = c('PC', 'PCintra', 'PCinter'), mean)
+  summarise_at(.vars = c('PC', 'PCintra', 'PCinter'), median)
 PC.low <- PC.df %>%
   group_by(GroupID) %>%
   summarise_at(.vars = c('PC', 'PCintra', 'PCinter'), quantile, probs = 0.025)
@@ -124,7 +123,7 @@ df2 <- data.frame(GroupID = PC.mean$GroupID, PC.mean = PC.mean$PCintra, IClow = 
 df3 <- data.frame(GroupID = PC.mean$GroupID, PC.mean = PC.mean$PCinter, IClow = PC.low$PCinter, IChigh = PC.high$PCinter, metric = 'PCinter')
 
 df.plot <- rbind(df1, df2, df3)
-df.plot$GroupID <- factor(df.plot$GroupID, levels = c(paste0('M', 1:8), paste0('A', 1:23)))
+df.plot$GroupID <- factor(df.plot$GroupID, levels = c(paste0('M', 1:11), paste0('A', 1:21)))
 df.plot$metric <- factor(df.plot$metric, levels = c('PC', 'PCintra', 'PCinter'))
 p2 <- ggplot(df.plot,aes(x=GroupID, fill= metric)) + 
   geom_bar(aes(y= PC.mean*100),position=position_dodge(), stat="identity") +
@@ -171,12 +170,12 @@ for (g in unique(lst.param$groupID)) {
   
   PC.mean.map1 <- PC.df %>%
     group_by(GroupID, SITECODE) %>%
-    summarise_at(.vars = c('PC_intra_i', 'PC_flux_i'), mean)
+    summarise_at(.vars = c('PC_intra_i', 'PC_flux_i'), median)
   
   PC.df <- PC.df[!is.na(PC.df$PC_connector_i), ] #remove rows with NA that correspond to failed simul (too long, aborted)
   PC.mean.map2 <- PC.df %>%
     group_by(GroupID, SITECODE) %>%
-    summarise_at(.vars = c('PC_connector_i'), mean)
+    summarise_at(.vars = c('PC_connector_i'), median)
   
   PC.mean.map <- dplyr::left_join(PC.mean.map1, PC.mean.map2[, c('SITECODE', 'PC_connector_i')], by = 'SITECODE')
   dfmap <- rbind(dfmap, PC.mean.map)
@@ -186,7 +185,7 @@ dfmap$Class <- ifelse(dfmap$GroupID %in% c(paste0('M', c(1:11))), 'Mammalia', 'A
 dfmap.g <- dfmap #values per group 
 dfmap <- dfmap %>% #values per class
   group_by(SITECODE, Class) %>%
-  summarise_at(.vars = c('PC_intra_i', 'PC_flux_i', 'PC_connector_i'), mean)
+  summarise_at(.vars = c('PC_intra_i', 'PC_flux_i', 'PC_connector_i'), median)
 
 # Get the maps 
 # France background 

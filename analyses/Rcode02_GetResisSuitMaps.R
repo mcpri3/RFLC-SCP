@@ -57,7 +57,7 @@ for (i in 1:nrow(combi.doable)) { #loop on each group that generates a geopackag
     if (class(occur.c) == 'numeric') {
       grid.fr$Nocc <- occur.c
       nData.sp <- sum(occur.c)
-      names(nData.sp) <- sub.lst$SPECIES_NAME_SYNONYM
+      names(nData.sp) <- gsub(' ', '_', sub.lst$SPECIES_NAME_SYNONYM)
     } else {
       nData.sp <- apply(occur.c, 2, sum)
       occur.c <- apply(occur.c, 1, sum)

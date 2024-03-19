@@ -231,12 +231,20 @@ for (g in unique(paste(lst.param$V2, lst.param$V3))) { #loop on each group
 ############### PER CLASS ################
 lst.rast.full <- list.files(here::here(paste0('outputs/EcologicalContinuities/Raster/Probs/')))
 lst.rast.full <- lst.rast.full[grep('GroupID_', lst.rast.full)]
+combi.doable <- openxlsx::read.xlsx(here::here('data/derived-data/FunctionalGroups/List-of-clustering-schemes.xlsx'))
 
-for (g in unique(lst.param$V2)) { #loop on each class
+for (i in 1:nrow(combi.doable)) {
   
+  g <- combi.doable$group[i] # class
+  k <- combi.doable$Nclus[i] # total number of clusters 
+
+  # Read species list to calculate the weight of each map based on the number of species in each group
+  lst.sp <- openxlsx::read.xlsx(here::here(paste0('data/derived-data/FunctionalGroups/VertebrateSpecies-list_withTraits_',g,'_GroupID_K=',k,'.xlsx')))
+  wg <- c(table(lst.sp$cluster.id)/sum(table(lst.sp$cluster.id)))
+  wg <- wg[sort(names(wg))]
   lst.rast <- lst.rast.full[grep(g, lst.rast.full)]
-  grid.rast <- terra::rast(here::here(paste0('outputs/EcologicalContinuities/Raster/Probs/', lst.rast)))
-  grid.rast <- sum(grid.rast)/length(lst.rast)
+  grid.rast <- terra::rast(here::here(paste0('outputs/EcologicalContinuities/Raster/Probs/', sort(lst.rast))))
+  grid.rast <- terra::weighted.mean(grid.rast, wg)
   terra::writeRaster(grid.rast, here::here(paste0('outputs/EcologicalContinuities/Raster/Probs/EcologicalContinuities_Probability_', g, '.tif')), overwrite = T)
   
 }

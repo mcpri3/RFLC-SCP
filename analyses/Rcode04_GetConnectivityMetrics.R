@@ -36,7 +36,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
                                               '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7], '.shp'))))
   corrid$corrid.area.km2 <- sf::st_area(corrid)/1000000
   
-  if (sum(class(corrid) == 'try-error') == 0) {
+  if (sum(class(corrid) == 'try-error') == 0) { #if an EC has been estimated
     
     # Get EC - PAs intersection
     all.ep.merge <- sf::st_transform(all.ep.merge, sf::st_crs(corrid))
@@ -47,7 +47,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
     saveRDS(indic.con, here::here(paste0('outputs/Indicators/PercOverlap-EC-StrictPA_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
                                          '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7])))
     
-  } else {
+  } else { #if no EC has been estimated
     
     # If no EC was estimated, overlap is 0 
     indic.con <- data.frame(Perc.overlap.corrid.PAs = 0)
@@ -77,7 +77,7 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
   corrid <- try(sf::st_read(here::here(paste0('outputs/EcologicalContinuities/Vector/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
                                               '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', lst.param[i, 7], '.shp'))))
   
-  if (sum(class(corrid) == 'try-error') == 0) {
+  if (sum(class(corrid) == 'try-error') == 0) { #if an EC has been estimated
     
     #####################################################################################################################
     ############### 2. Generate spatial network of connections among protected areas  ###################################
