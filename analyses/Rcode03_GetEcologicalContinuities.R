@@ -37,7 +37,7 @@ combi.doable <- openxlsx::read.xlsx(here::here('data/derived-data/FunctionalGrou
 # Parameter setting 
 p.threshold <- seq(0.5, 0.7, by = 0.1) #threshold to define source from estimated probabilities of suitability 
 coef.c <- c(2, 4, 8, 16) #habitat suitability to resistance transformation coefficient
-norm.flow <- seq(0.7, 1, by = 0.1) #threshold to select pixels from the normalized flow 
+norm.flow <- seq(0.7, 0.9, by = 0.1) #threshold to select pixels from the normalized flow 
 path.start <- here::here() #path to the root folder from which Omniscape algorithm will be run
 full.param <- data.frame()
 full.param.full <- data.frame()
@@ -150,10 +150,12 @@ run_omniscape(filepath)
 
 # Required general dataset 
 lst.param <- read.table(here::here('data/derived-data/BatchRun/list-of-params-for-batchrun-step1.txt')) #table of all parameter combinations 
-fnorm <- seq(0.7, 1, by = 0.1)
+fnorm <- seq(0.7, 0.9, by = 0.1)
 
 for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably run on a distant cluster each combination in parallel 
   
+  for (f in fnorm) {
+    
   norm.map <- terra::rast(here::here(paste0('data/derived-data/OmniscapeOutput/OmniscapeOutput_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
                                             '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], '/normalized_cum_currmap.tif')))
   flow.pot <- terra::rast(here::here(paste0('data/derived-data/OmniscapeOutput/OmniscapeOutput_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
@@ -166,25 +168,22 @@ for (i in 1:nrow(lst.param)) { #loop on each parameter combination, preferably r
   idx <- terra::values(flow.pot) < vals
   
   norm.map[idx] <- 0
-    
-  for (f in fnorm) {
-    
-    norm.map[norm.map < f] <- 0 
-    norm.map[norm.map >= f] <- 1 
+  norm.map[norm.map < f] <- 0 
+  norm.map[norm.map >= f] <- 1 
   
-    # Polygon disaggregation and saving (shapefile and raster formats)
-    poly <- terra::as.polygons(norm.map, dissolve = T)
-    poly <- poly[poly$normalized_cum_currmap == 1]
-    poly <- terra::disagg(poly)
+  # Polygon disaggregation and saving (shapefile and raster formats)
+  poly <- terra::as.polygons(norm.map, dissolve = T)
+  poly <- poly[poly$normalized_cum_currmap == 1]
+  poly <- terra::disagg(poly)
+  
+  if (length(poly) > 0) {
+    poly$corridorID <- c(1:length(poly))
+    terra::writeVector(poly, here::here(paste0('outputs/EcologicalContinuities/Vector/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
+                                               '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', f, '.shp')), filetype = 'ESRI Shapefile', overwrite = T)
     
-    if (length(poly) > 0) {
-      poly$corridorID <- c(1:length(poly))
-      terra::writeVector(poly, here::here(paste0('outputs/EcologicalContinuities/Vector/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                                 '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', f, '.shp')), filetype = 'ESRI Shapefile', overwrite = T)
-      
-      terra::writeRaster(norm.map, here::here(paste0('outputs/EcologicalContinuities/Raster/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
-                                                     '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', f, '.tif')), overwrite = T)
-    }
+    terra::writeRaster(norm.map, here::here(paste0('outputs/EcologicalContinuities/Raster/EcologicalContinuities_', lst.param[i, 2], '_GroupID_', lst.param[i, 3], '_TransfoCoef_', lst.param[i, 4],
+                                                   '_SuitThreshold_', lst.param[i, 5], '_DispDist_', lst.param[i, 6], 'km_NormFlowThreshold_', f, '.tif')), overwrite = T)
+  }
   }
 }
 

@@ -27,7 +27,7 @@ get.geo.path <- function(df, maxdisp, all.patches = all.ep) {
   
   goal2 <- data.frame()
   n <- 1
-  for (p in unique(pto)) {
+  foreach::foreach(p=unique(pto)) %do% {
     goal <- sf::st_coordinates(all.patches[all.patches$SITECODE %in% p, ]) # contour points
     topick <- seq(1, nrow(goal), by = ceiling(nrow(goal)/100)) #keep 100 points 
     goal <- goal[topick, ]
@@ -44,7 +44,7 @@ get.geo.path <- function(df, maxdisp, all.patches = all.ep) {
   linesList <- vector(mode="list", length=length(unique(goal2$L3)))
   p <- 1 
   
-  for (s in unique(goal2$L3)) { #run for each destination patch 
+  foreach::foreach(s=unique(goal2$L3)) %do% { #run for each destination patch 
     
     # Identify closest points for each origin-destination combination
     grid.dist <- expand.grid(origin = origin2$rowID, goal = goal2$rowID[goal2$L3 == s]) #try all point combination
