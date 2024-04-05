@@ -1,10 +1,10 @@
-#' RFLC-SCP: A Robust Framework to assess Landscape Connectivity for Systematic Conservation Planning application
+#' RFLC-SCP: A comprehensive framework to assess landscape connectivity for conservation planning
 #' 
 #' @description 
 #' This project provides all the data and codes used to produce the methodological framework and results presented in:
 #' 
 #' Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P., Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L., Moreira, F., Dertien, J.,
-#' Fernandez, N., & Thuiller, W. (in prep.). A robust framework to assess landscape connectivity for systematic conservation planning application. 
+#' Fernandez, N., & Thuiller, W. (in prep.). A comprehensive framework to assess landscape connectivity for conservation planning. 
 #' 
 #'
 #' The workflow is as follow, 

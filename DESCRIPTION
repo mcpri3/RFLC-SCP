@@ -1,6 +1,6 @@
 Package: RFLC-SCP
 Type: Research project data and code distribution
-Title: A Robust Framework to assess Landscape Connectivity for Systematic Conservation Planning application
+Title: A comprehensive framework to assess landscape connectivity for conservation planning
 Version: 0.0.0.9000
 Authors@R: c(
     person(given   = "Marie-Caroline",
