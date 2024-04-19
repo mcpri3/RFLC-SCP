@@ -190,7 +190,7 @@ g = 'Aves'
 sp.lst.traits.g  <- sp.lst.traits[sp.lst.traits$CLASS == g, ]
 mat.dist <- readRDS(here::here(paste0('data/derived-data/DissimilarityMatrices/Vertebrate-Species_CombinedDissimilarity_TraitsEnv_',g)))
 dendro <- speciesClustering(mat.species.DIST = list(mat.dist), opt.no_clust_max = 50) #Generate different metrics to look at to select the number of clusters 
-k = 21 # selected number of clusters 
+k = 19 # selected number of clusters 
 groups <- cutree(dendro$clust.dendrograms[[1]], k = k) #get the groups 
 groups <- data.frame(species = names(groups), cluster.id = c(groups))
 groups$species <- gsub('_', ' ', groups$species)

@@ -31,8 +31,8 @@ methodological framework and results presented in:
 Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P.,
 Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L.,
 Moreira, F., Dertien, J., Fernández, N., & Thuiller, W. (in prep.). A
-comprehensive framework to assess landscape connectivity for
-conservation planning.
+comprehensive framework to assess multi-species landscape connectivity
+for conservation planning.
 
 ## Features
 
@@ -130,8 +130,8 @@ Please use the following citation:
 > Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P.,
 > Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L.,
 > Moreira, F., Dertien, J., Fernandez, N., & Thuiller, W. (in prep.). A
-> comprehensive framework to assess landscape connectivity for
-> conservation planning.
+> comprehensive framework to assess multi-species landscape connectivity
+> for conservation planning.
 
 ## Contributing
 

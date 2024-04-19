@@ -10,7 +10,7 @@ Authors@R: c(
            comment = c(ORCID = "{{0000-0001-9392-0022}}")))
 Description: This project provides all the data and codes used to produce the methodological framework and results presented in:
   Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P., Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L., Moreira, F., Dertien, J., Fernández, N., & 
-  Thuiller, W. (in prep.). A comprehensive framework to assess landscape connectivity for conservation planning. 
+  Thuiller, W. (in prep.). A comprehensive framework to assess multi-species landscape connectivity for conservation planning. 
   The workflow is as follow, 
   Step 1. Clustering species in functional groups having similar traits and environmental niches (analyses/Rcode01_GetFunctionalGroups.R).
   Step 2. Generating resistance and habitat suitability maps for each group based on an ensemble of species distribution models  (analyses/Rcode2_GetResisSuitMaps.R).
