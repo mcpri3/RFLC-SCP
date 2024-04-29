@@ -68,27 +68,28 @@ This repository is structured as follow:
 - [`analyses/`](https://github.com/mcpri3/RFLC-SCP/tree/master/analyses):
   contains R scripts to run each step of the workflow
 
-- [`data/raw-data/`](http://naqlxmppgvsany36ktl2hej46yia6g4sxqc4e6kcitu45x3g47hhsmyd.onion):
-  contains all raw data required to perform analyses. Due to its size,
-  \[`data/raw-data/`\] folder was stored on another platform, accessible
-  here:
-  <http://naqlxmppgvsany36ktl2hej46yia6g4sxqc4e6kcitu45x3g47hhsmyd.onion>
-  Key: HNLJPNW6J7M4PH52OE7OHHORH23526264MGCSZ7EZSPZY57DTH7A These data
-  need to be downloaded and stored in the project folder before running
-  the workflow
+- [`data/raw-data/`](): contains all raw data required to perform
+  analyses. Due to its size, \[`data/raw-data/`\] folder was stored on
+  another platform, accessible here:
+  <http://clhkr6mmuay4ybxbxicc4bwdaene32ghnpvh2dln7y4lentv3htx2yad.onion>
+  Use the Tor Browser to download the data:
+  <https://www.torproject.org/download/> These data need to be
+  downloaded and stored in the project folder before running the
+  workflow
 
-- [`data/derived-data/`](http://naqlxmppgvsany36ktl2hej46yia6g4sxqc4e6kcitu45x3g47hhsmyd.onion):
-  contains all intermediate data created during the workflow. Due to its
-  size, \[`data/derived-data/`\] folder was stored on another platform,
+- [`data/derived-data/`](): contains all intermediate data created
+  during the workflow. Due to its size, \[`data/derived-data/`\] folder
+  was stored on another platform, accessible here:
+  <http://clhkr6mmuay4ybxbxicc4bwdaene32ghnpvh2dln7y4lentv3htx2yad.onion>
+  Use the Tor Browser to download the data:
+  <https://www.torproject.org/download/>
+
+- [`outputs/`](): contains final data created during the workflow. Due
+  to its size, \[`outputs/`\] folder was stored on another platform,
   accessible here:
-  <http://naqlxmppgvsany36ktl2hej46yia6g4sxqc4e6kcitu45x3g47hhsmyd.onion>
-  Key: HNLJPNW6J7M4PH52OE7OHHORH23526264MGCSZ7EZSPZY57DTH7A
-
-- [`outputs/`](http://naqlxmppgvsany36ktl2hej46yia6g4sxqc4e6kcitu45x3g47hhsmyd.onion):
-  contains final data created during the workflow. Due to its size,
-  \[`outputs/`\] folder was stored on another platform, accessible here:
-  <http://naqlxmppgvsany36ktl2hej46yia6g4sxqc4e6kcitu45x3g47hhsmyd.onion>
-  Key: HNLJPNW6J7M4PH52OE7OHHORH23526264MGCSZ7EZSPZY57DTH7A
+  <http://clhkr6mmuay4ybxbxicc4bwdaene32ghnpvh2dln7y4lentv3htx2yad.onion>
+  Use the Tor Browser to download the data:
+  <https://www.torproject.org/download/>
 
 - [`figures/`](https://github.com/mcpri3/RFLC-SCP/tree/master/figures):
   contains all the figures created during the workflow
