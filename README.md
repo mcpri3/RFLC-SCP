@@ -68,24 +68,24 @@ This repository is structured as follow:
 - [`analyses/`](https://github.com/mcpri3/RFLC-SCP/tree/master/analyses):
   contains R scripts to run each step of the workflow
 
-- [`data/raw-data/`](https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder):
+- [`data/raw-data/`](https://filesender.renater.fr/?s=download&token=0b5de737-082c-478e-8f64-845251e60ab9):
   contains all raw data required to perform analyses. Due to its size,
   \[`data/raw-data/`\] folder was stored on another platform, accessible
   here:
-  <https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder>
+  <https://filesender.renater.fr/?s=download&token=0b5de737-082c-478e-8f64-845251e60ab9>
   These data need to be downloaded and stored in the project folder
   before running the workflow
 
-- [`data/derived-data/`](https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder):
+- [`data/derived-data/`](https://filesender.renater.fr/?s=download&token=0b5de737-082c-478e-8f64-845251e60ab9):
   contains all intermediate data created during the workflow. Due to its
   size, \[`data/derived-data/`\] folder was stored on another platform,
   accessible here:
-  <https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder>
+  <https://filesender.renater.fr/?s=download&token=0b5de737-082c-478e-8f64-845251e60ab9>
 
-- [`outputs/`](https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-outputs-folder):
+- [`outputs/`](https://filesender.renater.fr/?s=download&token=0b5de737-082c-478e-8f64-845251e60ab9):
   contains final data created during the workflow. Due to its size,
   \[`outputs/`\] folder was stored on another platform, accessible here:
-  <https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-outputs-folder>
+  <https://filesender.renater.fr/?s=download&token=0b5de737-082c-478e-8f64-845251e60ab9>
 
 - [`figures/`](https://github.com/mcpri3/RFLC-SCP/tree/master/figures):
   contains all the figures created during the workflow
