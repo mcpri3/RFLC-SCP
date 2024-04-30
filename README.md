@@ -68,28 +68,24 @@ This repository is structured as follow:
 - [`analyses/`](https://github.com/mcpri3/RFLC-SCP/tree/master/analyses):
   contains R scripts to run each step of the workflow
 
-- [`data/raw-data/`](): contains all raw data required to perform
-  analyses. Due to its size, \[`data/raw-data/`\] folder was stored on
-  another platform, accessible here:
-  <http://clhkr6mmuay4ybxbxicc4bwdaene32ghnpvh2dln7y4lentv3htx2yad.onion>
-  Use the Tor Browser to download the data:
-  <https://www.torproject.org/download/> These data need to be
-  downloaded and stored in the project folder before running the
-  workflow
+- [`data/raw-data/`](https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder):
+  contains all raw data required to perform analyses. Due to its size,
+  \[`data/raw-data/`\] folder was stored on another platform, accessible
+  here:
+  <https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder>
+  These data need to be downloaded and stored in the project folder
+  before running the workflow
 
-- [`data/derived-data/`](): contains all intermediate data created
-  during the workflow. Due to its size, \[`data/derived-data/`\] folder
-  was stored on another platform, accessible here:
-  <http://clhkr6mmuay4ybxbxicc4bwdaene32ghnpvh2dln7y4lentv3htx2yad.onion>
-  Use the Tor Browser to download the data:
-  <https://www.torproject.org/download/>
-
-- [`outputs/`](): contains final data created during the workflow. Due
-  to its size, \[`outputs/`\] folder was stored on another platform,
+- [`data/derived-data/`](https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder):
+  contains all intermediate data created during the workflow. Due to its
+  size, \[`data/derived-data/`\] folder was stored on another platform,
   accessible here:
-  <http://clhkr6mmuay4ybxbxicc4bwdaene32ghnpvh2dln7y4lentv3htx2yad.onion>
-  Use the Tor Browser to download the data:
-  <https://www.torproject.org/download/>
+  <https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-data-folder>
+
+- [`outputs/`](https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-outputs-folder):
+  contains final data created during the workflow. Due to its size,
+  \[`outputs/`\] folder was stored on another platform, accessible here:
+  <https://www.kaggle.com/datasets/mariecarolineprima/rflc-scp-outputs-folder>
 
 - [`figures/`](https://github.com/mcpri3/RFLC-SCP/tree/master/figures):
   contains all the figures created during the workflow
@@ -133,7 +129,7 @@ Please use the following citation:
 
 > Prima, M.-C., Renaud, J., Witté, I., Suarez, L., Rouveyrol, P.,
 > Fernando, M., Sacchi, A., Cosentino, F., Santini, L., Maiorano, L.,
-> Moreira, F., Dertien, J., Fernandez, N., & Thuiller, W. (in prep.). A
+> Moreira, F., Dertien, J., Fernández, N., & Thuiller, W. (in prep.). A
 > comprehensive framework to assess multi-species landscape connectivity
 > for conservation planning.
 
